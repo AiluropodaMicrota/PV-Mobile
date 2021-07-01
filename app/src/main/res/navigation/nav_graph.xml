@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+    <fragment
+        android:id="@+id/actorInfoFragment"
+        android:name="com.th.pv.ActorInfoFragment"
+        android:label="fragment_actorinfo"
+        tools:layout="@layout/actor_info_fragment" >
+        <argument
+            android:name="actorId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_actorInfoFragment_to_actorVideosFragment"
+            app:destination="@id/actorVideosFragment" />
+        <action
+            android:id="@+id/action_actorInfoFragment_to_actorImagesFragment"
+            app:destination="@id/actorImagesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/actorsListFragment"
+        android:name="com.th.pv.actorList.ActorListFragment"
+        android:label="fragment_actorslist"
+        tools:layout="@layout/actor_list_fragment" >
+        <action
+            android:id="@+id/action_actorsListFragment_to_actorInfoFragment"
+            app:destination="@id/actorInfoFragment" />
+        <action
+            android:id="@+id/action_actorsListFragment_to_actorImagesFragment"
+            app:destination="@id/actorImagesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/actorVideosFragment"
+        android:name="com.th.pv.actorVideos.ActorVideosFragment"
+        android:label="fragment_actor_videos"
+        tools:layout="@layout/actor_videos_fragment" >
+        <action
+            android:id="@+id/action_actorVideosFragment_to_videoPlayer"
+            app:destination="@id/videoPlayer" />
+    </fragment>
+    <fragment
+        android:id="@+id/videoPlayer"
+        android:name="com.th.pv.actorVideoPlayer.ActorVideoPlayerFragment"
+        android:label="fragment_video_player"
+        tools:layout="@layout/actor_video_player_fragment" />
+    <fragment
+        android:id="@+id/actorImagesFragment"
+        android:name="com.th.pv.actorImages.ActorImagesFragment"
+        android:label="fragment_actor_images"
+        tools:layout="@layout/actor_images_fragment" >
+        <action
+            android:id="@+id/action_actorImagesFragment_to_actorImagesViewpagerFragment2"
+            app:destination="@id/actorImagesViewpagerFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/actorImagesViewpagerFragment2"
+        android:name="com.th.pv.actorImages.ActorImagesViewpagerFragment"
+        android:label="fragment_actor_images_viewpager"
+        tools:layout="@layout/actor_images_viewpager_fragment" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.th.pv.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/login_fragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_actorsListFragment"
+            app:destination="@id/actorsListFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

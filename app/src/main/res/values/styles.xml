@@ -1,0 +1,13 @@
+<resources>
+
+    <style name="Widget.Theme.PV.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/black_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
+
+    <style name="SampleApp.DayNight" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="materialDrawerStyle">@style/Widget.MaterialDrawerStyle</item>
+        <item name="materialDrawerHeaderStyle">@style/Widget.MaterialDrawerHeaderStyle</item>
+    </style>
+
+</resources>

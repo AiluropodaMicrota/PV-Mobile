@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.th.pv.MainActivity" android:layout_height="wrap_content" android:layout_width="wrap_content">
+    <item
+        android:id="@+id/action_video_download"
+        android:orderInCategory="100"
+        android:title="Download"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_video_info"
+        android:orderInCategory="100"
+        android:title="Info"
+        app:showAsAction="never" />
+</menu>
