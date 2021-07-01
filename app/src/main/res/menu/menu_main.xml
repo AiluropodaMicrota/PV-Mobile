@@ -4,18 +4,6 @@
     tools:context="com.th.pv.MainActivity">
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="102"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_load_all_except_videos"
-        android:orderInCategory="102"
-        android:title="Load all except videos"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_random_video"
         android:orderInCategory="102"
         android:title="Random video"
