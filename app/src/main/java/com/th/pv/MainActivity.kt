@@ -1,12 +1,15 @@
 package com.th.pv
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.os.*
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
@@ -24,7 +27,6 @@ import com.th.pv.actorVideos.ActorVideosFragment
 import com.th.pv.data.Actor
 import com.th.pv.data.PVData
 import org.json.JSONObject
-import kotlin.math.ceil
 import kotlin.math.min
 
 
@@ -51,11 +53,40 @@ class MainActivity : AppCompatActivity() {
         Log.d("PV","Server seems to be down: " + error.message)
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    private fun storagePermissionGranted(): Boolean {
+        val result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestStoragePermission() {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 101)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            101 -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                pvData.readData()
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_storagePermission_to_loginFragment)
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+
+        val version = Build.VERSION.SDK_INT
+        if (version > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (!storagePermissionGranted()) {
+                requestStoragePermission()
+            }
+            else {
+                pvData.readData()
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_storagePermission_to_loginFragment)
+            }
+        }
 
         Ion.getDefault(applicationContext).conscryptMiddleware.enable(false);
 
@@ -83,8 +114,6 @@ class MainActivity : AppCompatActivity() {
             false
         }
 
-        pvData.readData()
-
         imageDownloadingHandlerThread = HandlerThread("ImageDownloadingHandlerThread")
         imageDownloadingHandlerThread.start()
         imageDownloadingHandler = Handler(imageDownloadingHandlerThread.looper)
@@ -108,7 +137,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_random_video) {
             val key = pvData.videos.keys.filter {
