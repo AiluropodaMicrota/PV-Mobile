@@ -21,13 +21,13 @@ Any contributions are highly welcome
 ## Images
 
 ### Login | Actor collection | Actor page
-![Login | Actor collection | Actor page](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/1.jpg)
+![Login | Actor collection | Actor page](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/1.png)
 
 ### Actor images | Actor scenes | Scene context menu
-![Actor images | Actor scenes | Scene context menu](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/2.jpg)
+![Actor images | Actor scenes | Scene context menu](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/2.png)
 
 ### Scene details | Scene download | Images gallery
-![Scene details | Scene download | Images gallery](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/3.jpg)
+![Scene details | Scene download | Images gallery](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/3.png)
 
 ### Video player
 ![Video player](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/video_player.jpg)
