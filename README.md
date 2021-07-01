@@ -1,9 +1,7 @@
 # PV-Mobile
 [Porn-vault](https://github.com/porn-vault/porn-vault) mobile app implementation
 
-For me using porn-vault from browser wasn't very convenient, so I created this app
-This is my first android application and it may contain lots of bad code
-Any contributions are highly welcome
+For me using porn-vault from browser wasn't very convenient, so I created this app. This is my first android application and it may contain lots of bad code. Any contributions are highly welcome
 
 ## Info
 - This is only a client, you also need [server](https://github.com/porn-vault/porn-vault) to use it
@@ -30,4 +28,4 @@ Any contributions are highly welcome
 ![Scene details | Scene download | Images gallery](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/3.png)
 
 ### Video player
-![Video player](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/video_player.jpg)
+![Video player](https://raw.githubusercontent.com/AiluropodaMicrota/PV-Mobile/main/docs/images/4.jpg)
