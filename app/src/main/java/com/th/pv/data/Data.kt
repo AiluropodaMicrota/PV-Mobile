@@ -9,15 +9,15 @@ import org.json.JSONObject
 import java.io.File
 
 data class PVData(
-    val actors : MutableMap<String, Actor> = mutableMapOf(),
-    val images : MutableMap<String, ActorImage> = mutableMapOf(),
-    val videos : MutableMap<String, ActorVideo> = mutableMapOf(),
-    val markers : MutableMap<String, ActorVideoMarker> = mutableMapOf(),
-    val labels : MutableMap<String, ActorVideoLabel> = mutableMapOf(),
-    val savePath: String = Environment.getExternalStorageDirectory().toString() + "/PV"
+        val savePath: String,
+        val actors : MutableMap<String, Actor> = mutableMapOf(),
+        val images : MutableMap<String, ActorImage> = mutableMapOf(),
+        val videos : MutableMap<String, ActorVideo> = mutableMapOf(),
+        val markers : MutableMap<String, ActorVideoMarker> = mutableMapOf(),
+        val labels : MutableMap<String, ActorVideoLabel> = mutableMapOf()
 ) {
     fun getImagePath(image : ActorImage): String {
-        return Environment.getExternalStorageDirectory().toString() + "/PV/" + image.type
+        return savePath + "/" + image.type
     }
 
     fun getImageSrc(image : ActorImage): String {
@@ -27,9 +27,9 @@ data class PVData(
     fun getVideoPath(video : ActorVideo): String {
         if (video.loaded) {
             if (video.actors.isNotEmpty()) //TODO: look up all actors
-                return Environment.getExternalStorageDirectory().toString() + "/PV/videos/" + actors[video.actors[0]]!!.name + "/" + video.id + ".mp4"
+                return savePath + "/videos/" + actors[video.actors[0]]!!.name + "/" + video.id + ".mp4"
             else
-                return Environment.getExternalStorageDirectory().toString() + "/PV/videos/_Other/" + video.id + ".mp4"
+                return savePath + "/videos/_Other/" + video.id + ".mp4"
         }
         else
             return ip + "/api/media/scene/" + video.id + "?password=" + password

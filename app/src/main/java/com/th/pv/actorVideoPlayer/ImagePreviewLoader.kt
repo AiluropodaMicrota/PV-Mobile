@@ -11,6 +11,7 @@ import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.bumptech.glide.request.transition.Transition.ViewAdapter
 import com.github.rubensousa.previewseekbar.PreviewLoader
+import com.th.pv.R
 import com.th.pv.data.ActorVideo
 import com.th.pv.data.PVData
 
@@ -40,6 +41,7 @@ class ImagePreviewLoader (
             .load(pvData.getImageSrc(pvData.images[thumbnail.id]!!))
             .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
             .transform(GlideThumbnailTransformation(currentPosition, duration))
+            .placeholder(R.drawable.image_downloading)
             .into(imageView)
     }
 

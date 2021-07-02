@@ -14,6 +14,7 @@ import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.navigation.findNavController
+import androidx.navigation.get
 import com.android.volley.Response
 import com.koushikdutta.ion.Ion
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
@@ -31,7 +32,7 @@ import kotlin.math.min
 
 
 class MainActivity : AppCompatActivity() {
-    var pvData : PVData = PVData()
+    lateinit var pvData : PVData
 
     private var downloadingImage = false
     private lateinit var imageDownloadingHandlerThread : HandlerThread
@@ -53,40 +54,15 @@ class MainActivity : AppCompatActivity() {
         Log.d("PV","Server seems to be down: " + error.message)
     }
 
-    private fun storagePermissionGranted(): Boolean {
-        val result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        return result == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 101)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (requestCode) {
-            101 -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                pvData.readData()
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_storagePermission_to_loginFragment)
-            }
-            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        val version = Build.VERSION.SDK_INT
-        if (version > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (!storagePermissionGranted()) {
-                requestStoragePermission()
-            }
-            else {
-                pvData.readData()
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_storagePermission_to_loginFragment)
-            }
-        }
+        pvData = PVData(applicationContext.getExternalFilesDir(null)!!.absolutePath)
+        val navController = findNavController(R.id.nav_host_fragment)
+
+        pvData.readData()
 
         Ion.getDefault(applicationContext).conscryptMiddleware.enable(false);
 
@@ -102,13 +78,13 @@ class MainActivity : AppCompatActivity() {
         slider.onDrawerItemClickListener = { v, drawerItem, position ->
             if (drawerItem.identifier == 1L) {
                 val bundle = bundleOf("showAlbums" to false)
-                findNavController(R.id.nav_host_fragment).popBackStack(R.id.actorsListFragment, true)
-                findNavController(R.id.nav_host_fragment).navigate(R.id.actorsListFragment, bundle)
+                navController.popBackStack(R.id.actorsListFragment, true)
+                navController.navigate(R.id.actorsListFragment, bundle)
             }
             else if (drawerItem.identifier == 2L) {
                 val bundle = bundleOf("showAlbums" to true)
-                findNavController(R.id.nav_host_fragment).popBackStack(R.id.actorsListFragment, true)
-                findNavController(R.id.nav_host_fragment).navigate(R.id.actorsListFragment, bundle)
+                navController.popBackStack(R.id.actorsListFragment, true)
+                navController.navigate(R.id.actorsListFragment, bundle)
             }
 
             false
@@ -250,6 +226,7 @@ class MainActivity : AppCompatActivity() {
         }
         catch (e: Throwable) {
             Log.d("PV", "Error while parsing top actors answer: " + e.message)
+            e.printStackTrace()
             Log.d("PV", "Response:" + actorsResponse)
             queryTopActors()
         }
