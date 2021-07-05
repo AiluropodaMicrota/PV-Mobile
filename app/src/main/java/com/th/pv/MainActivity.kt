@@ -1,21 +1,15 @@
 package com.th.pv
 
-import android.Manifest
 import android.app.AlertDialog
-import android.content.pm.PackageManager
 import android.os.*
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.navigation.findNavController
-import androidx.navigation.get
-import com.android.volley.Response
 import com.koushikdutta.ion.Ion
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.materialdrawer.iconics.iconicsIcon
@@ -33,6 +27,7 @@ import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
     lateinit var pvData : PVData
+    var mHandler = Handler(Looper.getMainLooper())
 
     private var downloadingImage = false
     private lateinit var imageDownloadingHandlerThread : HandlerThread
@@ -46,13 +41,6 @@ class MainActivity : AppCompatActivity() {
     var videosQueryTriesLeft = queryMaxTries
     var startupRequestBeginTime : Long = 0
     var startupRequestFinished = false
-    var errorListener = Response.ErrorListener {error->
-        if (serverOnline) {
-            serverOnline = false
-        }
-
-        Log.d("PV","Server seems to be down: " + error.message)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -168,7 +156,7 @@ class MainActivity : AppCompatActivity() {
     
     fun queryStats() {
         startupRequestBeginTime = System.currentTimeMillis()
-        statQuery(applicationContext, Response.Listener<String> { response -> parseStats(response)}, errorListener)
+        statQuery(this)
     }
 
     fun parseStats(response : String) {
@@ -187,7 +175,7 @@ class MainActivity : AppCompatActivity() {
 
     fun queryTopActors() {
         if (topActorsQueryTriesLeft > 0) {
-            topActorsQuery(numActors, applicationContext, Response.Listener { actorsResponse -> parseTopActorsResponse(actorsResponse) }, errorListener)
+            topActorsQuery(this, numActors)
             topActorsQueryTriesLeft--
         }
         else
@@ -226,7 +214,7 @@ class MainActivity : AppCompatActivity() {
         }
         catch (e: Throwable) {
             Log.d("PV", "Error while parsing top actors answer: " + e.message)
-            e.printStackTrace()
+            //e.printStackTrace()
             Log.d("PV", "Response:" + actorsResponse)
             queryTopActors()
         }
@@ -239,12 +227,10 @@ class MainActivity : AppCompatActivity() {
         if (page * take < scenes) {
             if (videosQueryTriesLeft > 0) {
                 videosQuery(
+                    this,
                         min(take, scenes - page * take),
                         page,
-                        actor,
-                        applicationContext,
-                        Response.Listener { response -> parseVideosResponse(actor, page, response) },
-                        errorListener
+                        actor
                 )
 
                 videosQueryTriesLeft--
@@ -303,5 +289,51 @@ class MainActivity : AppCompatActivity() {
             Log.d("PV", "Response:" + response)
             queryVideos(actor, page)
         }
+    }
+
+    fun queryActorImages(actor : Actor) {
+        actorImagesQuery(this, actor)
+    }
+
+    fun parseImagesResponse(actor : Actor, response : String) {
+        try {
+            val json = JSONObject(response).getJSONObject("data").getJSONObject("getImages")
+            val imagesJson = json.getJSONArray("items")
+
+            var iterator = actor.images.iterator()
+            while (iterator.hasNext()) {
+                val img = iterator.next()
+                var found = false
+
+                for (i in 0 until imagesJson.length())
+                    if (imagesJson.getJSONObject(i).getString("_id") == img)
+                        found = true
+
+                if (!found && !pvData.images[img]!!.loaded) {
+                    pvData.images.remove(img)
+                    iterator.remove()
+                }
+            }
+
+            for (i in 0 until imagesJson.length())
+                pvData.parseImage(imagesJson.getJSONObject(i))
+
+            update()
+            pvData.saveData()
+
+            downloadImages()
+        }
+        catch (e : Throwable) {
+            Log.d("PV", "Error while parsing actor images answer: " + e.message)
+            Log.d("PV", "Response:" + response)
+        }
+    }
+
+    fun onNetworkError(error : String) {
+        if (serverOnline) {
+            serverOnline = false
+        }
+
+        Log.d("PV","Server seems to be down: " + error)
     }
 }

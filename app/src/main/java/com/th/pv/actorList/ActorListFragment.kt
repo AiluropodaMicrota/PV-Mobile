@@ -3,7 +3,6 @@ package com.th.pv.actorList
 import ActorListGridviewAdapter
 import android.content.Context
 import android.os.*
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,11 +13,8 @@ import android.widget.GridView
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.findNavController
-import com.android.volley.Response
-import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView
 import com.th.pv.*
 import com.th.pv.data.*
-import org.json.JSONObject
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.

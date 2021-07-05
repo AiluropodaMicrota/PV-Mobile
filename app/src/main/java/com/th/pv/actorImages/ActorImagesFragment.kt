@@ -1,7 +1,6 @@
 package com.th.pv.actorImages
 
 import android.os.*
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,17 +10,13 @@ import android.widget.ListView
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.findNavController
-import com.android.volley.Response
 import com.google.android.flexbox.AlignItems
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.th.pv.MainActivity
 import com.th.pv.R
-import com.th.pv.actorImagesQuery
 import com.th.pv.data.*
-import com.th.pv.downloadImages
-import org.json.JSONObject
 
 class ActorImagesFragment : Fragment() {
     lateinit var pvData : PVData
@@ -58,40 +53,8 @@ class ActorImagesFragment : Fragment() {
             findNavController().navigate(R.id.action_actorImagesFragment_to_actorImagesViewpagerFragment2, bundle)
         }
 
-        actorImagesQuery(actor, view.context, Response.Listener<String> { response ->
-            try {
-                val json = JSONObject(response).getJSONObject("data").getJSONObject("getImages")
-                val imagesJson = json.getJSONArray("items")
-
-                var iterator = actor.images.iterator()
-                while (iterator.hasNext()) {
-                    val img = iterator.next()
-                    var found = false
-
-                    for (i in 0 until imagesJson.length())
-                        if (imagesJson.getJSONObject(i).getString("_id") == img)
-                            found = true
-
-                    if (!found && !pvData.images[img]!!.loaded) {
-                        pvData.images.remove(img)
-                        iterator.remove()
-                    }
-                }
-
-                for (i in 0 until imagesJson.length())
-                    pvData.parseImage(imagesJson.getJSONObject(i))
-
-                update()
-                pvData.saveData()
-
-                if (isAdded)
-                    (activity as MainActivity).downloadImages()
-            }
-            catch (e : Throwable) {
-                Log.d("PV", "Error while parsing actor images answer: " + e.message)
-                Log.d("PV", "Response:" + response)
-            }
-        })
+        if ((activity as MainActivity).startupRequestFinished)
+            (activity as MainActivity).queryActorImages(actor)
     }
 
     fun update() {
