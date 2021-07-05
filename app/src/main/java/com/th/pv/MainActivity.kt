@@ -1,6 +1,10 @@
 package com.th.pv
 
 import android.app.AlertDialog
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.os.*
 import android.util.Log
 import android.view.Menu
@@ -26,8 +30,13 @@ import kotlin.math.min
 
 
 class MainActivity : AppCompatActivity() {
+    val queryMaxTries = 10
+    var downloadingProgressNotificationId = 100
+
     lateinit var pvData : PVData
     var mHandler = Handler(Looper.getMainLooper())
+    var notificationBuilder : Notification.Builder? = null
+    var notificationManager : NotificationManager? = null
 
     private var downloadingImage = false
     private lateinit var imageDownloadingHandlerThread : HandlerThread
@@ -36,7 +45,6 @@ class MainActivity : AppCompatActivity() {
 
     var numActors = 0
     var numScenes = 0
-    val queryMaxTries = 10
     var topActorsQueryTriesLeft = queryMaxTries
     var videosQueryTriesLeft = queryMaxTries
     var startupRequestBeginTime : Long = 0
@@ -130,6 +138,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun createDownloadingNotification() {
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val chanelId = "3000"
+            val name = "Downloading status"
+            val description = "Background image downloading status"
+            val importance = NotificationManager.IMPORTANCE_LOW
+            val mChannel = NotificationChannel(chanelId, name, importance)
+            mChannel.description = description
+            mChannel.enableLights(false)
+            notificationManager!!.createNotificationChannel(mChannel);
+            notificationBuilder = Notification.Builder(this, chanelId)
+        }
+        else
+            notificationBuilder = Notification.Builder(applicationContext)
+
+        notificationBuilder!!.setOngoing(true)
+            .setContentTitle("Downloading images")
+            .setContentText("0%")
+            .setSmallIcon(R.drawable.ic_download)
+            .setProgress(100, 0, false)
+
+        val notification: Notification = notificationBuilder!!.build()
+        notificationManager!!.notify(downloadingProgressNotificationId, notification)
+    }
+
     fun downloadImages() {
         if (downloadingImage)
             return
@@ -145,11 +180,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        createDownloadingNotification()
+
         imageDownloadingHandler.post {
             downloadingImage = true
-            downloadImages(pvData, onImageDownloaded)
+            downloadImages(this, onImageDownloaded)
             pvData.saveData()
             downloadingImage = false
+            notificationManager?.cancel(downloadingProgressNotificationId)
             Log.d("PV", "Downloading images finished")
         }
     }
@@ -335,6 +373,7 @@ class MainActivity : AppCompatActivity() {
             serverOnline = false
         }
 
+        startupRequestFinished = true
         Log.d("PV","Server seems to be down: " + error)
     }
 }

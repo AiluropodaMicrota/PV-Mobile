@@ -1,5 +1,7 @@
 package com.th.pv
 
+import android.app.Notification
+import android.app.NotificationManager
 import android.os.Environment
 import android.os.Handler
 import com.koushikdutta.async.future.FutureCallback
@@ -55,8 +57,9 @@ fun downloadVideo(activity : MainActivity, videosFragment: ActorVideosFragment, 
         }
 }
 
-fun downloadImages(pvData: PVData, downloadFinishedHandler : Handler) {
+fun downloadImages(activity: MainActivity, downloadFinishedHandler : Handler) {
     var imageToDownload : ActorImage? = null
+    var pvData = activity.pvData
 
     for ((key, value) in pvData.images) {
         if (!value.loaded && !value.loading) {
@@ -80,7 +83,17 @@ fun downloadImages(pvData: PVData, downloadFinishedHandler : Handler) {
                 downloaded.renameTo(File(pvData.getImageSrc(imageToDownload)))
                 imageToDownload.loaded = true
                 downloadFinishedHandler.sendEmptyMessage(0)
-                downloadImages(pvData, downloadFinishedHandler)
+
+                val downloadingProgress = (pvData.images.count {it.value.loaded}.toDouble() / pvData.images.count() * 100).toInt()
+                activity.notificationBuilder?.setProgress(
+                    100,
+                    downloadingProgress,
+                    false
+                )
+                activity.notificationBuilder?.setContentText("$downloadingProgress%")
+                activity.notificationManager?.notify(activity.downloadingProgressNotificationId, activity.notificationBuilder?.build())
+
+                downloadImages(activity, downloadFinishedHandler)
             }
         }
     }
