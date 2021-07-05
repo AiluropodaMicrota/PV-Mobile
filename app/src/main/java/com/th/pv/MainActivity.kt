@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     var topActorsQueryTriesLeft = queryMaxTries
     var videosQueryTriesLeft = queryMaxTries
     var startupRequestBeginTime : Long = 0
-    var startupRequestFinished = false
+    var startupRequestFinished = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +49,12 @@ class MainActivity : AppCompatActivity() {
 
         pvData = PVData(applicationContext.getExternalFilesDir(null)!!.absolutePath)
         val navController = findNavController(R.id.nav_host_fragment)
+        imageDownloadingHandlerThread = HandlerThread("ImageDownloadingHandlerThread")
+        imageDownloadingHandlerThread.start()
+        imageDownloadingHandler = Handler(imageDownloadingHandlerThread.looper)
 
         pvData.readData()
+        downloadImages()
 
         Ion.getDefault(applicationContext).conscryptMiddleware.enable(false);
 
@@ -77,10 +81,6 @@ class MainActivity : AppCompatActivity() {
 
             false
         }
-
-        imageDownloadingHandlerThread = HandlerThread("ImageDownloadingHandlerThread")
-        imageDownloadingHandlerThread.start()
-        imageDownloadingHandler = Handler(imageDownloadingHandlerThread.looper)
     }
 
     override fun onBackPressed() {
@@ -155,6 +155,7 @@ class MainActivity : AppCompatActivity() {
     }
     
     fun queryStats() {
+        startupRequestFinished = false
         startupRequestBeginTime = System.currentTimeMillis()
         statQuery(this)
     }
