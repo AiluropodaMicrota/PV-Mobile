@@ -27,6 +27,7 @@ import com.th.pv.data.Actor
 import com.th.pv.data.PVData
 import org.json.JSONObject
 import kotlin.math.min
+import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     var downloadingProgressNotificationId = 100
 
     lateinit var pvData : PVData
+    lateinit var optionsMenu : Menu
     var mHandler = Handler(Looper.getMainLooper())
     var notificationBuilder : Notification.Builder? = null
     var notificationManager : NotificationManager? = null
@@ -106,19 +108,28 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+        optionsMenu = menu
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_random_video) {
             val key = pvData.videos.keys.filter {
-                if (serverOnline)
-                    pvData.videos[it]!!.rating > 8.1
-                else
+                if (serverOnline) {
+                    val vid = pvData.videos[it]!!
+                    var score = vid.rating.toFloat()
+
+                    if (vid.meta.height >= 1080) score += 7
+                    else if (vid.meta.height >= 720) score += 5
+                    else if (vid.meta.height >= 480) score += 3
+                    else score += 1
+
+                    Random.nextFloat() < score / 17
+                } else
                     pvData.videos[it]!!.loaded
             }.random()
-            val bundle = bundleOf("videoId" to pvData.videos[key]!!.id)
 
+            val bundle = bundleOf("videoId" to pvData.videos[key]!!.id)
             findNavController(R.id.nav_host_fragment).navigate(R.id.videoPlayer, bundle)
         }
 
@@ -204,7 +215,7 @@ class MainActivity : AppCompatActivity() {
             numActors = json.getJSONObject("data").getInt("numActors")
             numScenes = json.getJSONObject("data").getInt("numScenes")
 
-            serverOnline = true
+            updateServerStatus(true)
             queryTopActors()
         } catch (e: Throwable) {
             Log.d("PV", "Error while parsing stats: " + e.message)
@@ -247,7 +258,7 @@ class MainActivity : AppCompatActivity() {
 
             pvData.saveData()
             topActorsQueryTriesLeft = queryMaxTries
-            serverOnline = true
+            updateServerStatus(true)
             queryVideos(null)
             //downloadImages()
         }
@@ -318,7 +329,7 @@ class MainActivity : AppCompatActivity() {
             update()
 
             pvData.saveData()
-            serverOnline = true
+            updateServerStatus(true)
             videosQueryTriesLeft = queryMaxTries
             queryVideos(actor, page + 1)
             downloadImages()
@@ -368,10 +379,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun updateServerStatus(online : Boolean) {
+        serverOnline = online
+
+        if (serverOnline)
+            optionsMenu.findItem(R.id.server_status).setIcon(R.drawable.ic_server_on)
+        else
+            optionsMenu.findItem(R.id.server_status).setIcon(R.drawable.ic_server_off)
+    }
+
     fun onNetworkError(error : String) {
-        if (serverOnline) {
-            serverOnline = false
-        }
+        updateServerStatus(false)
 
         startupRequestFinished = true
         Log.d("PV","Server seems to be down: " + error)
