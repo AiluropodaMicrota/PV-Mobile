@@ -57,7 +57,7 @@ fun downloadVideo(activity : MainActivity, videosFragment: ActorVideosFragment, 
         }
 }
 
-fun downloadImages(activity: MainActivity, downloadFinishedHandler : Handler) {
+fun downloadImages(activity: MainActivity, downloadFinishedHandler : Handler, imagesLoadedBeforeCount : Int) {
     var imageToDownload : ActorImage? = null
     var pvData = activity.pvData
 
@@ -84,7 +84,10 @@ fun downloadImages(activity: MainActivity, downloadFinishedHandler : Handler) {
                 imageToDownload.loaded = true
                 downloadFinishedHandler.sendEmptyMessage(0)
 
-                val downloadingProgress = (pvData.images.count {it.value.loaded}.toDouble() / pvData.images.count() * 100).toInt()
+                val downloadingProgress = (
+                            (pvData.images.count {it.value.loaded}.toDouble() - imagesLoadedBeforeCount)
+                            / (pvData.images.count() - imagesLoadedBeforeCount) * 100
+                        ).toInt()
                 activity.notificationBuilder?.setProgress(
                     100,
                     downloadingProgress,
@@ -93,7 +96,7 @@ fun downloadImages(activity: MainActivity, downloadFinishedHandler : Handler) {
                 activity.notificationBuilder?.setContentText("$downloadingProgress%")
                 activity.notificationManager?.notify(activity.downloadingProgressNotificationId, activity.notificationBuilder?.build())
 
-                downloadImages(activity, downloadFinishedHandler)
+                downloadImages(activity, downloadFinishedHandler, imagesLoadedBeforeCount)
             }
         }
     }

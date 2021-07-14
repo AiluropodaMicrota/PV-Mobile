@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity() {
         imageDownloadingHandler = Handler(imageDownloadingHandlerThread.looper)
 
         pvData.readData()
-        downloadImages()
 
         Ion.getDefault(applicationContext).conscryptMiddleware.enable(false);
 
@@ -195,7 +194,7 @@ class MainActivity : AppCompatActivity() {
 
         imageDownloadingHandler.post {
             downloadingImage = true
-            downloadImages(this, onImageDownloaded)
+            downloadImages(this, onImageDownloaded, pvData.images.count {it.value.loaded})
             pvData.saveData()
             downloadingImage = false
             notificationManager?.cancel(downloadingProgressNotificationId)
