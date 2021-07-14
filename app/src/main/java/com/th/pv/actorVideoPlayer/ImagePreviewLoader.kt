@@ -37,12 +37,22 @@ class ImagePreviewLoader (
             loaded = true
         }
 
-        Glide.with(imageView)
-            .load(pvData.getImageSrc(pvData.images[thumbnail.id]!!))
-            .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
-            .transform(GlideThumbnailTransformation(currentPosition, duration))
-            .placeholder(R.drawable.image_downloading)
-            .into(imageView)
+        val image = pvData.images[thumbnail.id]!!
+
+        if (image.loaded) {
+            Glide.with(imageView)
+                    .load(pvData.getImageSrc(pvData.images[thumbnail.id]!!))
+                    .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
+                    .transform(GlideThumbnailTransformation(currentPosition, duration))
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .into(imageView)
+        }
+        else {
+            Glide.with(imageView)
+                    .load(R.drawable.image_downloading)
+                    .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
+                    .into(imageView)
+        }
     }
 
     init {
