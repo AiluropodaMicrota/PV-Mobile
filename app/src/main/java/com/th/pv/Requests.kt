@@ -111,11 +111,15 @@ fun actorImagesQuery(activity : MainActivity, actor : Actor) {
     val request = okhttp3.Request.Builder().url(url).build()
     httpClient.newCall(request).enqueue(object : Callback {
         override fun onResponse(call: Call, response: okhttp3.Response) {
-            val body = response.body!!.string()
+            if (response.isSuccessful) {
+                val body = response.body!!.string()
 
-            activity.mHandler.post {
-                activity.parseImagesResponse(actor, body)
+                activity.mHandler.post {
+                    activity.parseImagesResponse(actor, body)
+                }
             }
+            else
+                activity.updateServerStatus(false)
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -141,11 +145,15 @@ fun videosQuery(activity: MainActivity, take : Int, page : Int, actor : Actor?) 
     val call = httpClient.newCall(request)
     call.enqueue(object : Callback {
         override fun onResponse(call: Call, response: okhttp3.Response) {
-            val body = response.body!!.string()
+            if (response.isSuccessful) {
+                val body = response.body!!.string()
 
-            activity.mHandler.post {
-                activity.parseVideosResponse(actor, page, body)
+                activity.mHandler.post {
+                    activity.parseVideosResponse(actor, page, body)
+                }
             }
+            else
+                activity.updateServerStatus(false)
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -167,11 +175,15 @@ fun topActorsQuery(activity: MainActivity, take : Int) {
     val request = okhttp3.Request.Builder().url(url).build()
     httpClient.newCall(request).enqueue(object : Callback {
         override fun onResponse(call: Call, response: okhttp3.Response) {
-            val body = response.body!!.string()
+            if (response.isSuccessful) {
+                val body = response.body!!.string()
 
-            activity.mHandler.post {
-                activity.parseTopActorsResponse(body)
+                activity.mHandler.post {
+                    activity.parseTopActorsResponse(body)
+                }
             }
+            else
+                activity.updateServerStatus(false)
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -194,11 +206,15 @@ fun statQuery(activity: MainActivity) {
 
     httpClient.newCall(request).enqueue(object : Callback {
         override fun onResponse(call: Call, response: okhttp3.Response) {
-            val body = response.body!!.string()
+            if (response.isSuccessful) {
+                val body = response.body!!.string()
 
-            activity.mHandler.post {
-                activity.parseStats(body)
+                activity.mHandler.post {
+                    activity.parseStats(body)
+                }
             }
+            else
+                activity.updateServerStatus(false)
         }
 
         override fun onFailure(call: Call, e: IOException) {
