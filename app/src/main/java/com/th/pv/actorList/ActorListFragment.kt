@@ -29,7 +29,7 @@ class ActorListFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        pvData = (activity as MainActivity).pvData
+        pvData = (activity as MainActivity).model.pvData
         (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         (activity as MainActivity).supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_drawer)

@@ -31,7 +31,7 @@ class ActorInfoFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        pvData = (activity as MainActivity).pvData
+        pvData = (activity as MainActivity).model.pvData
         return inflater.inflate(R.layout.actor_info_fragment, container, false)
     }
 

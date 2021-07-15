@@ -24,7 +24,7 @@ class LoginFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        pvData = (activity as MainActivity).pvData
+        pvData = (activity as MainActivity).model.pvData
         return inflater.inflate(R.layout.login_fragment, container, false)
     }
 

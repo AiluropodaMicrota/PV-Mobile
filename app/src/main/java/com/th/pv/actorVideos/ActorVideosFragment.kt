@@ -21,9 +21,9 @@ import java.lang.Exception
 class ActorVideosFragment : Fragment() {
     lateinit var pvData : PVData
 
-    lateinit var listView : ListView
-    lateinit var listViewAdapter: ActorVideosListviewAdapter
-    lateinit var actor : Actor
+    var listView : ListView? = null
+    var listViewAdapter: ActorVideosListviewAdapter? = null
+    var actor : Actor? = null
     var progressBar : CircularProgressBar? = null
     var progressText : TextView? = null
 
@@ -31,7 +31,7 @@ class ActorVideosFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        pvData = (activity as MainActivity).pvData
+        pvData = (activity as MainActivity).model.pvData
         return inflater.inflate(R.layout.actor_videos_fragment, container, false)
     }
 
@@ -62,7 +62,7 @@ class ActorVideosFragment : Fragment() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val itemInfo : AdapterView.AdapterContextMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
-        val vid = pvData.videos[actor.videos[itemInfo.position]]!!
+        val vid = pvData.videos[actor!!.videos[itemInfo.position]]!!
 
         when(item.itemId) {
             R.id.action_video_download -> {
@@ -104,28 +104,28 @@ class ActorVideosFragment : Fragment() {
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
         actor = pvData.actors[arguments?.getString("actorId")!!]!!
-        actor.videos.sortBy { !pvData.videos[it]!!.loaded }
+        actor!!.videos.sortBy { !pvData.videos[it]!!.loaded }
 
-        requireActivity().title = actor.name + " - Videos"
+        requireActivity().title = actor!!.name + " - Videos"
 
         listView = view.findViewById(R.id.list_actorVideos)
-        listViewAdapter = ActorVideosListviewAdapter(pvData, actor, view.context, R.layout.actor_videos_grid_item)
-        listView.adapter = listViewAdapter
+        listViewAdapter = ActorVideosListviewAdapter(pvData, actor!!, view.context, R.layout.actor_videos_grid_item)
+        listView!!.adapter = listViewAdapter
 
-        registerForContextMenu(listView)
+        registerForContextMenu(listView!!)
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val bundle = bundleOf("videoId" to actor.videos[position])
+        listView!!.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            val bundle = bundleOf("videoId" to actor!!.videos[position])
             findNavController().navigate(R.id.action_actorVideosFragment_to_videoPlayer, bundle)
         }
 
-        if ((activity as MainActivity).startupRequestFinished)
+        if ((activity as MainActivity).model.startupRequestFinished)
             (activity as MainActivity).queryVideos(actor)
     }
 
     fun update() {
-        actor.videos.sortBy { !pvData.videos[it]!!.loaded }
-        listViewAdapter.notifyDataSetChanged()
-        listView.invalidateViews()
+        actor?.videos?.sortBy { !pvData.videos[it]!!.loaded }
+        listViewAdapter?.notifyDataSetChanged()
+        listView?.invalidateViews()
     }
 }

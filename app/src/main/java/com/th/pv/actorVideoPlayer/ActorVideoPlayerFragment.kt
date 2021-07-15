@@ -67,7 +67,7 @@ class ActorVideoPlayerFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        pvData = (activity as MainActivity).pvData
+        pvData = (activity as MainActivity).model.pvData
 
         if (pvData.videos[arguments?.getString("videoId")!!]!!.isHorizontal()) {
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE

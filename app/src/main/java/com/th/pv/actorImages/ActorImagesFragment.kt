@@ -28,7 +28,7 @@ class ActorImagesFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        pvData = (activity as MainActivity).pvData
+        pvData = (activity as MainActivity).model.pvData
         return inflater.inflate(R.layout.actor_images_fragment, container, false)
     }
 
@@ -53,7 +53,7 @@ class ActorImagesFragment : Fragment() {
             findNavController().navigate(R.id.action_actorImagesFragment_to_actorImagesViewpagerFragment2, bundle)
         }
 
-        if ((activity as MainActivity).startupRequestFinished)
+        if ((activity as MainActivity).model.startupRequestFinished)
             (activity as MainActivity).queryActorImages(actor)
     }
 

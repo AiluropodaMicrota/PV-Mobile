@@ -9,10 +9,12 @@ import android.os.*
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.koushikdutta.ion.Ion
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
@@ -25,46 +27,40 @@ import com.th.pv.actorList.ActorListFragment
 import com.th.pv.actorVideos.ActorVideosFragment
 import com.th.pv.data.Actor
 import com.th.pv.data.PVData
+import okhttp3.internal.notifyAll
 import org.json.JSONObject
 import kotlin.math.min
 import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
-    val queryMaxTries = 10
     var downloadingProgressNotificationId = 100
 
-    lateinit var pvData : PVData
-    lateinit var optionsMenu : Menu
+    var optionsMenu : Menu? = null
     var mHandler = Handler(Looper.getMainLooper())
     var notificationBuilder : Notification.Builder? = null
     var notificationManager : NotificationManager? = null
-
-    var serverStatus = ServerStatus.UNKNOWN
-    private var downloadingImage = false
     private lateinit var imageDownloadingHandlerThread : HandlerThread
     private lateinit var imageDownloadingHandler : Handler
     private var previousImageLoadedTime : Long = 0
 
-    var numActors = 0
-    var numScenes = 0
+    val queryMaxTries = 10
     var topActorsQueryTriesLeft = queryMaxTries
     var videosQueryTriesLeft = queryMaxTries
-    var startupRequestBeginTime : Long = 0
-    var startupRequestFinished = true
+
+    val model : PVViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        pvData = PVData(applicationContext.getExternalFilesDir(null)!!.absolutePath)
+        model.load(applicationContext)
+
         val navController = findNavController(R.id.nav_host_fragment)
         imageDownloadingHandlerThread = HandlerThread("ImageDownloadingHandlerThread")
         imageDownloadingHandlerThread.start()
         imageDownloadingHandler = Handler(imageDownloadingHandlerThread.looper)
-
-        pvData.readData()
 
         Ion.getDefault(applicationContext).conscryptMiddleware.enable(false);
 
@@ -91,15 +87,33 @@ class MainActivity : AppCompatActivity() {
 
             false
         }
+
+        model.serverStatus.observe(this, Observer<ServerStatus> { status ->
+            if (status == ServerStatus.ONLINE) {
+                optionsMenu?.findItem(R.id.server_status)?.setIcon(R.drawable.ic_server_on)
+                optionsMenu?.findItem(R.id.server_status)?.title = "Server online"
+            }
+            else if (status == ServerStatus.UNKNOWN) {
+                optionsMenu?.findItem(R.id.server_status)?.setIcon(R.drawable.ic_server_unknown)
+                optionsMenu?.findItem(R.id.server_status)?.title = "Server status unknown"
+            }
+            else {
+                optionsMenu?.findItem(R.id.server_status)?.setIcon(R.drawable.ic_server_off)
+                optionsMenu?.findItem(R.id.server_status)?.title = "Server offline"
+            }
+        })
+
+        model.loggedIn.observe(this, Observer<Boolean> {  loggedIn ->
+            optionsMenu?.findItem(R.id.server_status)?.isVisible = loggedIn
+            optionsMenu?.findItem(R.id.action_random_video)?.isVisible = loggedIn
+        })
     }
 
     fun onLoginSuccessful() {
+        model.loggedIn.postValue(true)
         queryStats()
         downloadImages()
-        updateServerStatus(ServerStatus.UNKNOWN)
-
-        optionsMenu.findItem(R.id.server_status).isVisible = true
-        optionsMenu.findItem(R.id.action_random_video).isVisible = true
+        model.updateServerStatus(ServerStatus.UNKNOWN)
     }
 
     override fun onBackPressed() {
@@ -118,30 +132,17 @@ class MainActivity : AppCompatActivity() {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         optionsMenu = menu
+        model.loggedIn.postValue(model.loggedIn.value)
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_random_video) {
-            val keys = pvData.videos.keys.filter {
-                if (serverStatus == ServerStatus.ONLINE) {
-                    val vid = pvData.videos[it]!!
-                    var score = vid.rating.toFloat()
+            val video = model.randomVideo()
 
-                    if (vid.meta.height >= 1080) score += 7
-                    else if (vid.meta.height >= 720) score += 5
-                    else if (vid.meta.height >= 480) score += 3
-                    else score += 1
-
-                    Random.nextFloat() < score / 17
-                } else
-                    pvData.videos[it]!!.loaded
-            }
-
-            if (keys.isNotEmpty()) {
-                val key = keys.random()
-
-                val bundle = bundleOf("videoId" to pvData.videos[key]!!.id)
+            if (video != null) {
+                val bundle = bundleOf("videoId" to video.id)
                 findNavController(R.id.nav_host_fragment).navigate(R.id.videoPlayer, bundle)
             }
         }
@@ -190,7 +191,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun downloadImages() {
-        if (downloadingImage)
+        if (model.downloadingImage)
             return
 
         val onImageDownloaded = object : Handler(Looper.getMainLooper()) {
@@ -198,7 +199,7 @@ class MainActivity : AppCompatActivity() {
                 update();
 
                 if (System.currentTimeMillis() - previousImageLoadedTime > 1000) {
-                    pvData.saveData()
+                    model.pvData.saveData()
                     previousImageLoadedTime = System.currentTimeMillis()
                 }
             }
@@ -207,28 +208,28 @@ class MainActivity : AppCompatActivity() {
         createDownloadingNotification()
 
         imageDownloadingHandler.post {
-            downloadingImage = true
-            downloadImages(this, onImageDownloaded, pvData.images.count {it.value.loaded})
-            pvData.saveData()
-            downloadingImage = false
+            model.downloadingImage = true
+            downloadImages(this, onImageDownloaded, model.pvData.images.count {it.value.loaded})
+            model.pvData.saveData()
+            model.downloadingImage = false
             notificationManager?.cancel(downloadingProgressNotificationId)
             Log.d("PV", "Downloading images finished")
         }
     }
     
     fun queryStats() {
-        startupRequestFinished = false
-        startupRequestBeginTime = System.currentTimeMillis()
+        model.startupRequestFinished = false
+        model.startupRequestBeginTime = System.currentTimeMillis()
         statQuery(this)
     }
 
     fun parseStats(response : String) {
         try {
             val json = JSONObject(response)
-            numActors = json.getJSONObject("data").getInt("numActors")
-            numScenes = json.getJSONObject("data").getInt("numScenes")
+            model.numActors = json.getJSONObject("data").getInt("numActors")
+            model.numScenes = json.getJSONObject("data").getInt("numScenes")
 
-            updateServerStatus(ServerStatus.ONLINE)
+            model.updateServerStatus(ServerStatus.ONLINE)
             queryTopActors()
         } catch (e: Throwable) {
             Log.d("PV", "Error while parsing stats: " + e.message)
@@ -238,7 +239,7 @@ class MainActivity : AppCompatActivity() {
 
     fun queryTopActors() {
         if (topActorsQueryTriesLeft > 0) {
-            topActorsQuery(this, numActors)
+            topActorsQuery(this, model.numActors)
             topActorsQueryTriesLeft--
         }
         else
@@ -250,7 +251,7 @@ class MainActivity : AppCompatActivity() {
             val actorsJson = JSONObject(actorsResponse).getJSONObject("data")
                     .getJSONArray("topActors")
 
-            var iterator = pvData.actors.iterator()
+            var iterator = model.pvData.actors.iterator()
             while (iterator.hasNext()) {
                 val act = iterator.next()
                 var found = false
@@ -266,12 +267,12 @@ class MainActivity : AppCompatActivity() {
             for (i in 0 until actorsJson.length()) {
                 val actorJson = actorsJson.getJSONObject(i)
 
-                pvData.parseActor(actorJson)
+                model.pvData.parseActor(actorJson)
             }
 
-            pvData.saveData()
+            model.pvData.saveData()
             topActorsQueryTriesLeft = queryMaxTries
-            updateServerStatus(ServerStatus.ONLINE)
+            model.updateServerStatus(ServerStatus.ONLINE)
             queryVideos(null)
             //downloadImages()
         }
@@ -284,7 +285,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun queryVideos(actor : Actor?, page : Int = 0) {
-        val scenes = if (actor == null) numScenes else actor.videos.size
+        val scenes = if (actor == null) model.numScenes else actor.videos.size
         val take = if (actor == null) 100 else scenes
 
         if (page * take < scenes) {
@@ -302,11 +303,11 @@ class MainActivity : AppCompatActivity() {
                 Log.d("PV", "Videos query: Stopped requesting, out tries ")
         }
         else {
-            if (!startupRequestFinished) {
-                startupRequestFinished = true
+            if (!model.startupRequestFinished) {
+                model.startupRequestFinished = true
                 Log.d(
                     "PV",
-                    "Startup request finished in %.2f s".format((System.currentTimeMillis() - startupRequestBeginTime).toDouble() / 1000)
+                    "Startup request finished in %.2f s".format((System.currentTimeMillis() - model.startupRequestBeginTime).toDouble() / 1000)
                 )
             }
         }
@@ -328,8 +329,8 @@ class MainActivity : AppCompatActivity() {
                         if (videosJson.getJSONObject(i).getString("_id") == vid)
                             found = true
 
-                    if (!found && !pvData.videos[vid]!!.loaded) {
-                        pvData.videos.remove(vid)
+                    if (!found && !model.pvData.videos[vid]!!.loaded) {
+                        model.pvData.videos.remove(vid)
                         iterator.remove()
                     }
                 }
@@ -337,12 +338,12 @@ class MainActivity : AppCompatActivity() {
 
             for (i in 0 until videosJson.length()) {
                 val vid = videosJson.getJSONObject(i)
-                pvData.parseVideo(vid)
+                model.pvData.parseVideo(vid)
             }
             update()
 
-            pvData.saveData()
-            updateServerStatus(ServerStatus.ONLINE)
+            model.pvData.saveData()
+            model.updateServerStatus(ServerStatus.ONLINE)
             videosQueryTriesLeft = queryMaxTries
             queryVideos(actor, page + 1)
             downloadImages()
@@ -372,17 +373,17 @@ class MainActivity : AppCompatActivity() {
                     if (imagesJson.getJSONObject(i).getString("_id") == img)
                         found = true
 
-                if (!found && !pvData.images[img]!!.loaded) {
-                    pvData.images.remove(img)
+                if (!found && !model.pvData.images[img]!!.loaded) {
+                    model.pvData.images.remove(img)
                     iterator.remove()
                 }
             }
 
             for (i in 0 until imagesJson.length())
-                pvData.parseImage(imagesJson.getJSONObject(i))
+                model.pvData.parseImage(imagesJson.getJSONObject(i))
 
             update()
-            pvData.saveData()
+            model.pvData.saveData()
 
             downloadImages()
         }
@@ -392,27 +393,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun updateServerStatus(online : ServerStatus) {
-        serverStatus = online
-
-        if (serverStatus == ServerStatus.ONLINE) {
-            optionsMenu.findItem(R.id.server_status).setIcon(R.drawable.ic_server_on)
-            optionsMenu.findItem(R.id.server_status).title = "Server online"
-        }
-        else if (serverStatus == ServerStatus.UNKNOWN) {
-            optionsMenu.findItem(R.id.server_status).setIcon(R.drawable.ic_server_unknown)
-            optionsMenu.findItem(R.id.server_status).title = "Server status unknown"
-        }
-        else {
-            optionsMenu.findItem(R.id.server_status).setIcon(R.drawable.ic_server_off)
-            optionsMenu.findItem(R.id.server_status).title = "Server offline"
-        }
-    }
-
     fun onNetworkError(error : String) {
-        updateServerStatus(ServerStatus.OFFLINE)
+        model.updateServerStatus(ServerStatus.OFFLINE)
 
-        startupRequestFinished = true
+        model.startupRequestFinished = true
         Log.d("PV","Server seems to be down: " + error)
     }
 }

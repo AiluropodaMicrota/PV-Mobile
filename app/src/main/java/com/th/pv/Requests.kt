@@ -55,7 +55,7 @@ fun downloadVideo(activity : MainActivity, videosFragment: ActorVideosFragment, 
 
 fun downloadImages(activity: MainActivity, downloadFinishedHandler : Handler, imagesLoadedBeforeCount : Int) {
     var imageToDownload : ActorImage? = null
-    var pvData = activity.pvData
+    var pvData = activity.model.pvData
 
     for ((key, value) in pvData.images) {
         if (!value.loaded && !value.loading) {
@@ -115,7 +115,7 @@ fun actorImagesQuery(activity : MainActivity, actor : Actor) {
                 }
             }
             else
-                activity.updateServerStatus(ServerStatus.OFFLINE)
+                activity.model.updateServerStatus(ServerStatus.OFFLINE)
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -149,7 +149,7 @@ fun videosQuery(activity: MainActivity, take : Int, page : Int, actor : Actor?) 
                 }
             }
             else
-                activity.updateServerStatus(ServerStatus.OFFLINE)
+                activity.model.updateServerStatus(ServerStatus.OFFLINE)
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -179,7 +179,7 @@ fun topActorsQuery(activity: MainActivity, take : Int) {
                 }
             }
             else
-                activity.updateServerStatus(ServerStatus.OFFLINE)
+                activity.model.updateServerStatus(ServerStatus.OFFLINE)
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -210,7 +210,7 @@ fun statQuery(activity: MainActivity) {
                 }
             }
             else
-                activity.updateServerStatus(ServerStatus.OFFLINE)
+                activity.model.updateServerStatus(ServerStatus.OFFLINE)
         }
 
         override fun onFailure(call: Call, e: IOException) {
