@@ -53,7 +53,7 @@ dependencies {
     implementation "com.mikepenz:fontawesome-typeface:5.9.0.2-kotlin"
     implementation("androidx.multidex:multidex:2.0.1")
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
-    compile 'com.koushikdutta.ion:ion:3.0.8'
+    implementation 'com.koushikdutta.ion:ion:3.1.0'
     implementation 'com.mikhaellopez:circularprogressbar:3.1.0'
     implementation 'com.google.android.exoplayer:exoplayer:2.14.1'
     implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.11.4.0'

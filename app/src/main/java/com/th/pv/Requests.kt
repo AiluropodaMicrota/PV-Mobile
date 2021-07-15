@@ -25,9 +25,7 @@ fun downloadVideo(activity : MainActivity, videosFragment: ActorVideosFragment, 
     video.loaded = false
 
     val url = pvData.getVideoPath(video)
-    val f = File(
-        Environment.getExternalStorageDirectory().toString() +
-                "/PV/videos/" +
+    val f = File(pvData.savePath + "/videos/" +
                 if (video.actors.isEmpty()) "_Other" else pvData.actors[video.actors[0]]!!.name
     ) //TODO: lookup all actors
     if (!f.exists())
