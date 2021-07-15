@@ -1,7 +1,5 @@
 package com.th.pv
 
-import android.app.Notification
-import android.app.NotificationManager
 import android.os.Environment
 import android.os.Handler
 import com.koushikdutta.async.future.FutureCallback
@@ -19,9 +17,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 
-
 var httpClient = OkHttpClient()
-var serverOnline = true
 var ip = ""
 var password = ""
 
@@ -119,7 +115,7 @@ fun actorImagesQuery(activity : MainActivity, actor : Actor) {
                 }
             }
             else
-                activity.updateServerStatus(false)
+                activity.updateServerStatus(ServerStatus.OFFLINE)
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -153,7 +149,7 @@ fun videosQuery(activity: MainActivity, take : Int, page : Int, actor : Actor?) 
                 }
             }
             else
-                activity.updateServerStatus(false)
+                activity.updateServerStatus(ServerStatus.OFFLINE)
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -183,7 +179,7 @@ fun topActorsQuery(activity: MainActivity, take : Int) {
                 }
             }
             else
-                activity.updateServerStatus(false)
+                activity.updateServerStatus(ServerStatus.OFFLINE)
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -214,7 +210,7 @@ fun statQuery(activity: MainActivity) {
                 }
             }
             else
-                activity.updateServerStatus(false)
+                activity.updateServerStatus(ServerStatus.OFFLINE)
         }
 
         override fun onFailure(call: Call, e: IOException) {

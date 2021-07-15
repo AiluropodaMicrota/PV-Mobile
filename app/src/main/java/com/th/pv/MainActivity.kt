@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     var notificationBuilder : Notification.Builder? = null
     var notificationManager : NotificationManager? = null
 
+    var serverStatus = ServerStatus.UNKNOWN
     private var downloadingImage = false
     private lateinit var imageDownloadingHandlerThread : HandlerThread
     private lateinit var imageDownloadingHandler : Handler
@@ -92,6 +93,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun onLoginSuccessful() {
+        queryStats()
+        downloadImages()
+        updateServerStatus(ServerStatus.UNKNOWN)
+
+        optionsMenu.findItem(R.id.server_status).isVisible = true
+        optionsMenu.findItem(R.id.action_random_video).isVisible = true
+    }
+
     override fun onBackPressed() {
         if (supportFragmentManager.findFragmentById(R.id.nav_host_fragment)!!.childFragmentManager.backStackEntryCount == 0)
             AlertDialog.Builder(this)
@@ -113,8 +123,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_random_video) {
-            val key = pvData.videos.keys.filter {
-                if (serverOnline) {
+            val keys = pvData.videos.keys.filter {
+                if (serverStatus == ServerStatus.ONLINE) {
                     val vid = pvData.videos[it]!!
                     var score = vid.rating.toFloat()
 
@@ -126,10 +136,14 @@ class MainActivity : AppCompatActivity() {
                     Random.nextFloat() < score / 17
                 } else
                     pvData.videos[it]!!.loaded
-            }.random()
+            }
 
-            val bundle = bundleOf("videoId" to pvData.videos[key]!!.id)
-            findNavController(R.id.nav_host_fragment).navigate(R.id.videoPlayer, bundle)
+            if (keys.isNotEmpty()) {
+                val key = keys.random()
+
+                val bundle = bundleOf("videoId" to pvData.videos[key]!!.id)
+                findNavController(R.id.nav_host_fragment).navigate(R.id.videoPlayer, bundle)
+            }
         }
 
         return super.onOptionsItemSelected(item)
@@ -214,7 +228,7 @@ class MainActivity : AppCompatActivity() {
             numActors = json.getJSONObject("data").getInt("numActors")
             numScenes = json.getJSONObject("data").getInt("numScenes")
 
-            updateServerStatus(true)
+            updateServerStatus(ServerStatus.ONLINE)
             queryTopActors()
         } catch (e: Throwable) {
             Log.d("PV", "Error while parsing stats: " + e.message)
@@ -257,7 +271,7 @@ class MainActivity : AppCompatActivity() {
 
             pvData.saveData()
             topActorsQueryTriesLeft = queryMaxTries
-            updateServerStatus(true)
+            updateServerStatus(ServerStatus.ONLINE)
             queryVideos(null)
             //downloadImages()
         }
@@ -328,7 +342,7 @@ class MainActivity : AppCompatActivity() {
             update()
 
             pvData.saveData()
-            updateServerStatus(true)
+            updateServerStatus(ServerStatus.ONLINE)
             videosQueryTriesLeft = queryMaxTries
             queryVideos(actor, page + 1)
             downloadImages()
@@ -378,17 +392,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun updateServerStatus(online : Boolean) {
-        serverOnline = online
+    fun updateServerStatus(online : ServerStatus) {
+        serverStatus = online
 
-        if (serverOnline)
+        if (serverStatus == ServerStatus.ONLINE) {
             optionsMenu.findItem(R.id.server_status).setIcon(R.drawable.ic_server_on)
-        else
+            optionsMenu.findItem(R.id.server_status).title = "Server online"
+        }
+        else if (serverStatus == ServerStatus.UNKNOWN) {
+            optionsMenu.findItem(R.id.server_status).setIcon(R.drawable.ic_server_unknown)
+            optionsMenu.findItem(R.id.server_status).title = "Server status unknown"
+        }
+        else {
             optionsMenu.findItem(R.id.server_status).setIcon(R.drawable.ic_server_off)
+            optionsMenu.findItem(R.id.server_status).title = "Server offline"
+        }
     }
 
     fun onNetworkError(error : String) {
-        updateServerStatus(false)
+        updateServerStatus(ServerStatus.OFFLINE)
 
         startupRequestFinished = true
         Log.d("PV","Server seems to be down: " + error)

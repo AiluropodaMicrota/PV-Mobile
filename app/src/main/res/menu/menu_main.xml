@@ -8,11 +8,13 @@
         android:icon="@drawable/ic_server_on"
         android:orderInCategory="102"
         android:title="Server status"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_random_video"
         android:orderInCategory="103"
         android:title="Random video"
+        android:visible="false"
         app:showAsAction="never" />
 </menu>

@@ -55,8 +55,7 @@ class LoginFragment : Fragment() {
                 password = pass
                 val bundle = bundleOf("showAlbums" to false)
 
-                (activity as MainActivity).queryStats()
-                (activity as MainActivity).downloadImages()
+                (activity as MainActivity).onLoginSuccessful()
 
                 view.findViewById<TextView>(R.id.errorText).visibility = TextView.GONE
                 findNavController().navigate(R.id.action_loginFragment_to_actorsListFragment, bundle)
