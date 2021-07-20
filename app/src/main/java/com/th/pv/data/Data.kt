@@ -205,7 +205,7 @@ data class PVData(
         return Meta(
             meta.getJSONObject("dimensions").getInt("width"),
             meta.getJSONObject("dimensions").getInt("height"),
-            if (meta.isNull("size")) null else meta.getInt("size"),
+            if (meta.isNull("size")) null else meta.getLong("size"),
             if (meta.isNull("duration")) null else meta.getDouble("duration"),
             if (meta.isNull("fps")) null else meta.getDouble("fps"),
             if (meta.isNull("bitrate")) null else meta.getInt("bitrate")

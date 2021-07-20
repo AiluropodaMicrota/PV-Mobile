@@ -7,7 +7,7 @@ import java.util.*
 data class Meta(
     var width : Int,
     var height : Int,
-    var size : Int?,
+    var size : Long?,
     var duration: Double?,
     var fps : Double?,
     var bitrate : Int?
