@@ -117,11 +117,7 @@ fun actorImagesQuery(activity : MainActivity, actor : Actor) {
         }
 
         override fun onFailure(call: Call, e: IOException) {
-            val error = e.message!!
-
-            activity.mHandler.post {
-                activity.onNetworkError(error)
-            }
+            defaultOnFailure(activity, e)
         }
     })
 }
@@ -151,11 +147,7 @@ fun videosQuery(activity: MainActivity, take : Int, page : Int, actor : Actor?) 
         }
 
         override fun onFailure(call: Call, e: IOException) {
-            val error = e.message!!
-
-            activity.mHandler.post {
-                activity.onNetworkError(error)
-            }
+            defaultOnFailure(activity, e)
         }
     })
 }
@@ -181,11 +173,7 @@ fun topActorsQuery(activity: MainActivity, take : Int) {
         }
 
         override fun onFailure(call: Call, e: IOException) {
-            val error = e.message!!
-
-            activity.mHandler.post {
-                activity.onNetworkError(error)
-            }
+            defaultOnFailure(activity, e)
         }
     })
 }
@@ -212,12 +200,15 @@ fun statQuery(activity: MainActivity) {
         }
 
         override fun onFailure(call: Call, e: IOException) {
-            val error = e.message!!
-
-            activity.mHandler.post {
-                activity.onNetworkError(error)
-            }
+            defaultOnFailure(activity, e)
         }
     })
 }
 
+fun defaultOnFailure(activity : MainActivity, e : IOException) {
+    val error = if (e.message != null) e.message!! else "No error message provided"
+
+    activity.mHandler.post {
+        activity.onNetworkError(error)
+    }
+}

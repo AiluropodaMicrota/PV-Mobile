@@ -1,6 +1,5 @@
 package com.th.pv.data
 
-import android.os.Environment
 import android.util.Log
 import com.th.pv.ip
 import com.th.pv.password
