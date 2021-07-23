@@ -384,6 +384,7 @@ class MainActivity : AppCompatActivity() {
 
             update()
             model.pvData.saveData()
+            model.updateServerStatus(ServerStatus.ONLINE)
 
             downloadImages()
         }
