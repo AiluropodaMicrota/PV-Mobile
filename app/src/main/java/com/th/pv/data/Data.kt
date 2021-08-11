@@ -88,6 +88,7 @@ data class PVData(
             labels.clear()
 
             Log.d("PV", "File parse error: " + e.message)
+            e.printStackTrace()
         }
     }
 
@@ -281,8 +282,11 @@ data class PVData(
     fun parseImage(img: JSONObject) {
         val id = img.getString("_id")
         val actorsJSON = img.getJSONArray("actors")
-        val actorName = if (actorsJSON.length() > 0) actorsJSON.getJSONObject(0)
-            .getString("_id") else "_Other" //TODO
+        val actorName =
+                if (actorsJSON.length() > 0)
+                    actorsJSON.getJSONObject(0).getString("_id")
+                else
+                    "_Other" //TODO
 
         //Add image to actors
         for (i in 0 until actorsJSON.length()) {
