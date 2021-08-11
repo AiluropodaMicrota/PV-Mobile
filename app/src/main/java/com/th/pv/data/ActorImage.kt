@@ -19,7 +19,7 @@ data class ActorImage(
         obj.put("name", name)
         obj.put("type", type)
         obj.put("loaded", loaded)
-        obj.put("actors", JSONArray(actors.map { JSONObject().put("_id", pvData.actors[it]!!.id) }))
+        obj.put("actors", JSONArray(actors.map { JSONObject().put("_id", pvData.actors[it]?.id) }))
 
         return obj
     }

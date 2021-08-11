@@ -1,6 +1,7 @@
 package com.th.pv.actorImages
 
 import android.os.*
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -53,8 +54,12 @@ class ActorImagesFragment : Fragment() {
             findNavController().navigate(R.id.action_actorImagesFragment_to_actorImagesViewpagerFragment2, bundle)
         }
 
-        if ((activity as MainActivity).model.startupRequestFinished)
+        if ((activity as MainActivity).model.startupRequestFinished) {
+            Log.d("PV", "Starting actor images request")
             (activity as MainActivity).queryActorImages(actor)
+        }
+        else
+            Log.d("PV", "Actor images request can't be performed now")
     }
 
     fun update() {

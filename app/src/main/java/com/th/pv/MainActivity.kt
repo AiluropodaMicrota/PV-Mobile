@@ -1,4 +1,4 @@
-package com.th.pv
+ package com.th.pv
 
 import android.app.AlertDialog
 import android.app.Notification
@@ -270,6 +270,7 @@ class MainActivity : AppCompatActivity() {
                 model.pvData.parseActor(actorJson)
             }
 
+            update()
             model.pvData.saveData()
             topActorsQueryTriesLeft = queryMaxTries
             model.updateServerStatus(ServerStatus.ONLINE)
@@ -278,7 +279,7 @@ class MainActivity : AppCompatActivity() {
         }
         catch (e: Throwable) {
             Log.d("PV", "Error while parsing top actors answer: " + e.message)
-            //e.printStackTrace()
+            e.printStackTrace()
             Log.d("PV", "Response:" + actorsResponse)
             queryTopActors()
         }
