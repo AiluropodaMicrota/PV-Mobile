@@ -2,6 +2,7 @@ package com.th.pv.actorVideos
 
 import android.app.AlertDialog
 import android.os.*
+import android.provider.MediaStore
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.AdapterView
@@ -23,7 +24,7 @@ class ActorVideosFragment : Fragment() {
 
     var listView : ListView? = null
     var listViewAdapter: ActorVideosListviewAdapter? = null
-    var actor : Actor? = null
+    var filter : VideoFilter = VideoFilter()
     var progressBar : CircularProgressBar? = null
     var progressText : TextView? = null
 
@@ -62,7 +63,7 @@ class ActorVideosFragment : Fragment() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val itemInfo : AdapterView.AdapterContextMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
-        val vid = pvData.videos[actor!!.videos[itemInfo.position]]!!
+        val vid = pvData.videos[pvData.filterVideos(filter)[itemInfo.position]]!!
 
         when(item.itemId) {
             R.id.action_video_download -> {
@@ -103,28 +104,31 @@ class ActorVideosFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
-        actor = pvData.actors[arguments?.getString("actorId")!!]!!
-        actor!!.videos.sortBy { !pvData.videos[it]!!.loaded }
+        if (arguments?.containsKey("actorId")!!) {
+            val actor = pvData.actors[arguments?.getString("actorId")!!]!!
+            requireActivity().title = actor.name + " - Scenes"
+            filter.actorsOr.add(actor.id)
 
-        requireActivity().title = actor!!.name + " - Videos"
+            if ((activity as MainActivity).model.startupRequestFinished)
+                (activity as MainActivity).queryVideos(actor)
+        }
+        else {
+            requireActivity().title = "Scenes"
+        }
 
         listView = view.findViewById(R.id.list_actorVideos)
-        listViewAdapter = ActorVideosListviewAdapter(pvData, actor!!, view.context, R.layout.actor_videos_grid_item)
+        listViewAdapter = ActorVideosListviewAdapter(pvData, filter, view.context, R.layout.actor_videos_grid_item)
         listView!!.adapter = listViewAdapter
 
         registerForContextMenu(listView!!)
 
         listView!!.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val bundle = bundleOf("videoId" to actor!!.videos[position])
+            val bundle = bundleOf("videoId" to pvData.filterVideos(filter)[position])
             findNavController().navigate(R.id.action_actorVideosFragment_to_videoPlayer, bundle)
         }
-
-        if ((activity as MainActivity).model.startupRequestFinished)
-            (activity as MainActivity).queryVideos(actor)
     }
 
     fun update() {
-        actor?.videos?.sortBy { !pvData.videos[it]!!.loaded }
         listViewAdapter?.notifyDataSetChanged()
         listView?.invalidateViews()
     }

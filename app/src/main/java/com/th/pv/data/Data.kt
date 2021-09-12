@@ -15,6 +15,18 @@ data class PVData(
         val markers : MutableMap<String, ActorVideoMarker> = mutableMapOf(),
         val labels : MutableMap<String, ActorVideoLabel> = mutableMapOf()
 ) {
+    fun filterVideos(filter : VideoFilter) : MutableList<String> {
+        val list = mutableListOf<String>()
+
+        for (vid in videos.keys)
+            if (filter.fits(videos[vid]!!))
+                list.add(vid)
+
+        list.sortBy { !videos[it]!!.loaded }
+
+        return list
+    }
+
     fun getImagePath(image : ActorImage): String {
         return savePath + "/" + image.type
     }

@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.koushikdutta.ion.Ion
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.materialdrawer.iconics.iconicsIcon
@@ -68,21 +69,27 @@ class MainActivity : AppCompatActivity() {
 
         val slider = findViewById<MaterialDrawerSliderView>(R.id.slider)
         slider.itemAdapter.add(
+            PrimaryDrawerItem().apply { iconicsIcon = FontAwesome.Icon.faw_video; nameText = "Scenes"; identifier = 3 },
             PrimaryDrawerItem().apply { iconicsIcon = FontAwesome.Icon.faw_user_friends; nameText = "Actors"; identifier = 1 },
             PrimaryDrawerItem().apply { iconicsIcon = FontAwesome.Icon.faw_folder_open; nameText = "Albums"; identifier = 2 }
         )
         slider.setSelection(1)
 
         slider.onDrawerItemClickListener = { v, drawerItem, position ->
+            while (navController.currentBackStackEntry != null)
+                navController.popBackStack()
+
             if (drawerItem.identifier == 1L) {
                 val bundle = bundleOf("showAlbums" to false)
-                navController.popBackStack(R.id.actorsListFragment, true)
                 navController.navigate(R.id.actorsListFragment, bundle)
             }
             else if (drawerItem.identifier == 2L) {
                 val bundle = bundleOf("showAlbums" to true)
-                navController.popBackStack(R.id.actorsListFragment, true)
                 navController.navigate(R.id.actorsListFragment, bundle)
+            }
+            else if (drawerItem.identifier == 3L) {
+                val bundle = bundleOf()
+                navController.navigate(R.id.actorVideosFragment, bundle)
             }
 
             false

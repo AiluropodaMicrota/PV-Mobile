@@ -21,7 +21,7 @@ import com.th.pv.data.*
 
 class ActorVideosListviewAdapter(
         private var pvData: PVData,
-        private var actor : Actor,
+        private var filter: VideoFilter,
         context : Context,
         resource : Int
 ) : ArrayAdapter<String>(context, resource) {
@@ -29,7 +29,7 @@ class ActorVideosListviewAdapter(
     private var layoutInflater: LayoutInflater? = null
 
     override fun getCount(): Int {
-        return actor.videos.size
+        return pvData.filterVideos(filter).size
     }
 
     @SuppressLint("ResourceType")
@@ -47,7 +47,7 @@ class ActorVideosListviewAdapter(
             convertView = layoutInflater!!.inflate(R.layout.actor_videos_grid_item, null)
         }
 
-        val video = pvData.videos[actor.videos[position]]!!
+        val video = pvData.videos[pvData.filterVideos(filter)[position]]!!
 
         val imageView = convertView!!.findViewById<ImageView>(R.id.gridActorVideos_imageView)
         val textView = convertView.findViewById<TextView>(R.id.gridActorVideos_textView)
