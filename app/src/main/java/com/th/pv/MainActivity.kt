@@ -14,9 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.koushikdutta.ion.Ion
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.materialdrawer.iconics.iconicsIcon
@@ -27,14 +27,11 @@ import com.th.pv.actorImages.ActorImagesFragment
 import com.th.pv.actorList.ActorListFragment
 import com.th.pv.actorVideos.ActorVideosFragment
 import com.th.pv.data.Actor
-import com.th.pv.data.PVData
-import okhttp3.internal.notifyAll
 import org.json.JSONObject
 import kotlin.math.min
-import kotlin.random.Random
 
 
-class MainActivity : AppCompatActivity() {
+ class MainActivity : AppCompatActivity() {
     var downloadingProgressNotificationId = 100
 
     var optionsMenu : Menu? = null
@@ -44,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageDownloadingHandlerThread : HandlerThread
     private lateinit var imageDownloadingHandler : Handler
     private var previousImageLoadedTime : Long = 0
+    private lateinit var currentFragment: Fragment
 
     val queryMaxTries = 10
     var topActorsQueryTriesLeft = queryMaxTries
@@ -116,6 +114,12 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    fun onFragmentCreated(fragment : Fragment) {
+        currentFragment = fragment
+
+        optionsMenu?.findItem(R.id.filter_videos)?.isVisible = fragment is ActorVideosFragment
+    }
+
     fun onLoginSuccessful() {
         model.loggedIn.postValue(true)
         queryStats()
@@ -152,6 +156,10 @@ class MainActivity : AppCompatActivity() {
                 val bundle = bundleOf("videoId" to video.id)
                 findNavController(R.id.nav_host_fragment).navigate(R.id.videoPlayer, bundle)
             }
+        }
+        else if (item.itemId == R.id.filter_videos) {
+            val frag = VideoFilterFragment(currentFragment as ActorVideosFragment)
+            frag.show(supportFragmentManager, "video_filter")
         }
 
         return super.onOptionsItemSelected(item)

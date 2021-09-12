@@ -3,13 +3,16 @@ package com.th.pv.actorVideos
 import android.app.AlertDialog
 import android.os.*
 import android.provider.MediaStore
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.RatingBar
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.koushikdutta.async.future.FutureCallback
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
@@ -103,6 +106,7 @@ class ActorVideosFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        (activity as MainActivity).onFragmentCreated(this)
 
         if (arguments?.containsKey("actorId")!!) {
             val actor = pvData.actors[arguments?.getString("actorId")!!]!!
@@ -126,6 +130,12 @@ class ActorVideosFragment : Fragment() {
             val bundle = bundleOf("videoId" to pvData.filterVideos(filter)[position])
             findNavController().navigate(R.id.action_actorVideosFragment_to_videoPlayer, bundle)
         }
+    }
+
+    fun onDialogPositiveClick(dialog : DialogFragment) {
+        val ratingBar = dialog.dialog!!.findViewById<RatingBar>(R.id.filterMinRatingBar)
+        filter.minRating = (ratingBar.rating * 2).toInt()
+        update()
     }
 
     fun update() {

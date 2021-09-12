@@ -43,6 +43,7 @@ class ActorListFragment : Fragment() {
 
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         requireActivity().title = if (showAlbums) "Albums" else "Actors"
+        (activity as MainActivity).onFragmentCreated(this)
 
         //Hide keyboard
         val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

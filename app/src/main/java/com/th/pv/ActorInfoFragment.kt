@@ -39,6 +39,7 @@ class ActorInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        (activity as MainActivity).onFragmentCreated(this)
 
         actor = pvData.actors[arguments?.getString("actorId")!!]!!
         requireActivity().title = actor.name

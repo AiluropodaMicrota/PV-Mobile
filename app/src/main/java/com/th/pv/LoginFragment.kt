@@ -41,6 +41,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = "Login"
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        (activity as MainActivity).onFragmentCreated(this)
 
         val ipEditText = view.findViewById<EditText>(R.id.editTextAddress)
         val passwordEditText = view.findViewById<EditText>(R.id.editTextPassword)

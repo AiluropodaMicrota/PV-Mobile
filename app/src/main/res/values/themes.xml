@@ -14,6 +14,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name = "RatingBar" parent="Theme.AppCompat">
+        <item name = "colorControlNormal">#FFD700</item>
+        <item name= "colorControlActivated">#FFD700</item>
+    </style>
+
     <style name="Theme.PV.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
