@@ -146,7 +146,8 @@ data class PVData(
                 thumbnail,
                 preview,
                 vid.getInt("rating"),
-                parseMeta(vid.getJSONObject("meta"))
+                parseMeta(vid.getJSONObject("meta")),
+                vid.getBoolean("favorite")
             )
         } else {
             videos[id]!!.name = vid.getString("name")
@@ -154,6 +155,7 @@ data class PVData(
             videos[id]!!.preview = preview
             videos[id]!!.rating = vid.getInt("rating")
             videos[id]!!.meta = parseMeta(vid.getJSONObject("meta"))
+            videos[id]!!.favorite = vid.getBoolean("favorite")
         }
 
         //Add actors to video

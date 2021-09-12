@@ -2,19 +2,17 @@ package com.th.pv.data
 
 data class VideoFilter(
         var minRating : Int = 0,
+        var onlyFavourite : Boolean = false,
         var actorsOr : MutableList<String> = mutableListOf()
 ) {
     fun fits(video : ActorVideo) : Boolean {
-        return fitsRating(video) && fitsActors(video)
+        return fitsActors(video) &&
+                video.rating >= minRating &&
+                (!onlyFavourite || video.favorite)
     }
 
 
 
-
-
-    fun fitsRating(video : ActorVideo) : Boolean {
-        return  video.rating >= minRating
-    }
 
     fun fitsActors(video : ActorVideo) : Boolean {
         if (actorsOr.isEmpty())

@@ -13,6 +13,7 @@ data class ActorVideo(
 
     var rating : Int,
     var meta : Meta,
+    var favorite : Boolean,
     var loaded : Boolean = false,
     var actors : MutableList<String> = mutableListOf(),
     var markers : MutableList<String> = mutableListOf(),
@@ -40,6 +41,7 @@ data class ActorVideo(
         obj.put("_id", id)
         obj.put("name", name)
         obj.put("rating", rating)
+        obj.put("favorite", favorite)
         obj.put("loaded", loaded)
         obj.put("actors", JSONArray(actors.map { JSONObject().put("_id", pvData.actors[it]!!.id) }))
         obj.put("labels", JSONArray(labels.map {  pvData.labels[it]!!.toJson()}))

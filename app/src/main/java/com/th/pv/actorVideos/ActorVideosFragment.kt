@@ -5,11 +5,8 @@ import android.os.*
 import android.provider.MediaStore
 import android.util.Log
 import android.view.*
+import android.widget.*
 import androidx.fragment.app.Fragment
-import android.widget.AdapterView
-import android.widget.ListView
-import android.widget.RatingBar
-import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
@@ -135,6 +132,7 @@ class ActorVideosFragment : Fragment() {
     fun onDialogPositiveClick(dialog : DialogFragment) {
         val ratingBar = dialog.dialog!!.findViewById<RatingBar>(R.id.filterMinRatingBar)
         filter.minRating = (ratingBar.rating * 2).toInt()
+        filter.onlyFavourite = dialog.dialog!!.findViewById<CheckBox>(R.id.onlyFavouriteCheckbox).isChecked
         update()
     }
 

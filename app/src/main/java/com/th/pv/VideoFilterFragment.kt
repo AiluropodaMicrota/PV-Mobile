@@ -2,6 +2,7 @@ package com.th.pv
 
 import android.app.Dialog
 import android.os.Bundle
+import android.widget.CheckBox
 import android.widget.RatingBar
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -19,6 +20,7 @@ class VideoFilterFragment(
             val root = inflater.inflate(R.layout.actor_videos_filter, null)
 
             root.findViewById<RatingBar>(R.id.filterMinRatingBar).rating = listener.filter.minRating.toFloat() / 2
+            root.findViewById<CheckBox>(R.id.onlyFavouriteCheckbox).isChecked = listener.filter.onlyFavourite
 
             builder.setView(root)
                     .setPositiveButton("Ok"
