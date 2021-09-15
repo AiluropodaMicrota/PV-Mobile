@@ -41,8 +41,8 @@ class VideoFilterFragment(
                 updateFilter()
             }
 
-            durationSlider = root.findViewById<RangeSlider>(R.id.durationSlider)
-            durationSlider.valueTo = getMaxVideoDuration(newFilter) + 1
+            durationSlider = root.findViewById(R.id.durationSlider)
+            durationSlider.valueTo = getDurationSliderValueTo()
             durationSlider.values = listOf(
                 listener.filter.minDuration.toFloat(),
                 min(durationSlider.valueTo, listener.filter.maxDuration.toFloat())
@@ -71,10 +71,7 @@ class VideoFilterFragment(
     }
 
     fun updateFilter() {
-        val filter = newFilter.copy()
-        filter.minDuration = 0.0
-        filter.maxDuration = 36000.0
-        val maxDur = getMaxVideoDuration(filter) + 1
+        val maxDur = getDurationSliderValueTo()
         var minDurPos = durationSlider.values[0]
         if (minDurPos == durationSlider.valueTo)
             minDurPos = maxDur
@@ -97,6 +94,14 @@ class VideoFilterFragment(
             return String.format("%02d:%02d:%02d", secs / 3600, (secs % 3600) / 60, secs % 60)
         else
             return String.format("%02d:%02d", secs / 60, secs % 60)
+    }
+
+    private fun getDurationSliderValueTo() : Float {
+        val filter = newFilter.copy()
+        filter.minDuration = 0.0
+        filter.maxDuration = 36000.0
+
+        return getMaxVideoDuration(filter) + 1
     }
 
     private fun getMaxVideoDuration(filter : VideoFilter) : Float {
