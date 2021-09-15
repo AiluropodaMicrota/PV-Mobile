@@ -11,6 +11,7 @@ import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.slider.RangeSlider
 import com.koushikdutta.async.future.FutureCallback
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import com.th.pv.*
@@ -133,6 +134,8 @@ class ActorVideosFragment : Fragment() {
         val ratingBar = dialog.dialog!!.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.filterMinRatingBar)
         filter.minRating = (ratingBar.rating * 2).toInt()
         filter.onlyFavourite = dialog.dialog!!.findViewById<CheckBox>(R.id.onlyFavouriteCheckbox).isChecked
+        filter.minDuration = dialog.dialog!!.findViewById<RangeSlider>(R.id.durationSlider).values[0].toDouble()
+        filter.maxDuration = dialog.dialog!!.findViewById<RangeSlider>(R.id.durationSlider).values[1].toDouble()
         update()
     }
 
