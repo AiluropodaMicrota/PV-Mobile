@@ -130,12 +130,9 @@ class ActorVideosFragment : Fragment() {
         }
     }
 
-    fun onDialogPositiveClick(dialog : DialogFragment) {
-        val ratingBar = dialog.dialog!!.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.filterMinRatingBar)
-        filter.minRating = (ratingBar.rating * 2).toInt()
-        filter.onlyFavourite = dialog.dialog!!.findViewById<CheckBox>(R.id.onlyFavouriteCheckbox).isChecked
-        filter.minDuration = dialog.dialog!!.findViewById<RangeSlider>(R.id.durationSlider).values[0].toDouble()
-        filter.maxDuration = dialog.dialog!!.findViewById<RangeSlider>(R.id.durationSlider).values[1].toDouble()
+    fun onDialogPositiveClick(dialog : VideoFilterFragment) {
+        filter = dialog.newFilter.copy()
+        listViewAdapter!!.filter = filter
         update()
     }
 

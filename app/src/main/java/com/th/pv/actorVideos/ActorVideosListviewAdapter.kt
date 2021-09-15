@@ -21,7 +21,7 @@ import com.th.pv.data.*
 
 class ActorVideosListviewAdapter(
         private var pvData: PVData,
-        private var filter: VideoFilter,
+        var filter: VideoFilter,
         context : Context,
         resource : Int
 ) : ArrayAdapter<String>(context, resource) {
