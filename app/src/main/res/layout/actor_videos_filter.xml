@@ -4,25 +4,39 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/grid_spacing">
+    android:padding="?dialogPreferredPadding">
 
-    <me.zhanghai.android.materialratingbar.MaterialRatingBar
-        android:id="@+id/filterMinRatingBar"
-        style="@style/Widget.MaterialRatingBar.RatingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:numStars="5"
-        app:mrb_progressTint="#FFC107"
-        app:mrb_secondaryProgressTint="#FFC107" />
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Filter videos"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle" />
 
-    <CheckBox
-        android:id="@+id/onlyFavouriteCheckbox"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_weight="1"
-        android:button="@drawable/favourite_checkbox_selector"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        android:textSize="18sp"
-        app:buttonTint="@color/red" />
+        <me.zhanghai.android.materialratingbar.MaterialRatingBar
+            android:id="@+id/filterMinRatingBar"
+            style="@style/Widget.MaterialRatingBar.RatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:numStars="5"
+            app:mrb_progressTint="#FFC107"
+            app:mrb_secondaryProgressTint="#FFC107" />
+
+        <CheckBox
+            android:id="@+id/onlyFavouriteCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/grid_spacing"
+            android:layout_weight="1"
+            android:button="@drawable/favourite_checkbox_selector"
+            android:textSize="18sp"
+            app:buttonTint="@color/red" />
+    </LinearLayout>
 
 </LinearLayout>
