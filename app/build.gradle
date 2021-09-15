@@ -61,4 +61,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.32"
+    implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
 }

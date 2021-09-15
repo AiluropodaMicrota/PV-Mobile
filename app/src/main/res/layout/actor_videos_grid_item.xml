@@ -27,16 +27,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gridActorVideos_imageView" />
 
-    <com.th.pv.FontAwesome
+    <me.zhanghai.android.materialratingbar.MaterialRatingBar
         android:id="@+id/rating"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:text=""
-        android:textColor="#FFD700"
-        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Widget.MaterialRatingBar.RatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:isIndicator="true"
+        android:numStars="5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gridActorVideos_textView" />
+        app:layout_constraintTop_toBottomOf="@+id/gridActorVideos_textView"
+        app:mrb_progressTint="#FFC107"
+        app:mrb_secondaryProgressTint="#FFC107" />
 
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/labels"

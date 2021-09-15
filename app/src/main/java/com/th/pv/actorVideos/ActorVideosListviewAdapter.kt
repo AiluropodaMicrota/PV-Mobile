@@ -65,13 +65,8 @@ class ActorVideosListviewAdapter(
                 DateUtils.formatElapsedTime(it.toLong())
         }
 
-        val ratingView = convertView.findViewById<FontAwesome>(R.id.rating)
-        var ratingText = ""
-        for (i in 0 until video.rating / 2)
-            ratingText += "\uf005"
-        if (video.rating % 2 == 1)
-            ratingText += "\uf5c0"
-        ratingView.text = ratingText
+        val ratingView = convertView.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.rating)
+        ratingView.rating = video.rating.toFloat() / 2
 
         var labelsLay = convertView.findViewById<FlexboxLayout>(R.id.labels)
         labelsLay.removeAllViews()

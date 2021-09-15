@@ -47,13 +47,8 @@ class ActorInfoFragment : Fragment() {
         view.findViewById<TextView>(R.id.averageRating).text = "Average scene rating: %.1f".format(Locale.US, actor.rating)
         view.findViewById<TextView>(R.id.score).text = "PV score: %.1f".format(Locale.US, actor.score)
 
-        val ratingView = view.findViewById<FontAwesome>(R.id.rating)
-        var ratingText = ""
-        for (i in 0 until (actor.rating / 2).toInt())
-            ratingText += "\uf005"
-        if ((actor.rating / 2 - (actor.rating / 2).toInt()) >= 0.5)
-            ratingText += "\uf5c0"
-        ratingView.text = ratingText
+        val ratingView = view.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.rating)
+        ratingView.rating = (actor.rating / 2).toFloat()
 
         view.findViewById<Button>(R.id.scenesButton).setOnClickListener {
             val bundle = bundleOf("actorId" to actor.id)

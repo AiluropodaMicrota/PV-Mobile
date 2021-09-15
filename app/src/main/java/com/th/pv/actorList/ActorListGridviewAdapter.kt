@@ -63,13 +63,8 @@ class ActorListGridviewAdapter (
 
         glideLoadInto(context, imageView, pvData, pvData.images[actor.thumbnail])
 
-        val ratingView = convertView.findViewById<FontAwesome>(R.id.actor_rating)
-        var ratingText = ""
-        for (i in 0 until (actor.rating / 2).toInt())
-            ratingText += "\uf005"
-        if ((actor.rating / 2 - (actor.rating / 2).toInt()) >= 0.5)
-            ratingText += "\uf5c0"
-        ratingView.text = ratingText
+        val ratingView = convertView.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.actor_rating)
+        ratingView.rating = (actor.rating / 2).toFloat()
 
         textView.text = actor.name
         return convertView

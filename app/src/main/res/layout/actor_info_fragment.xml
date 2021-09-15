@@ -35,18 +35,16 @@
                     tools:src="@tools:sample/avatars" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.th.pv.FontAwesome
+            <me.zhanghai.android.materialratingbar.MaterialRatingBar
                 android:id="@+id/rating"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingLeft="16dp"
-                android:paddingTop="4dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="4dp"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="#FFD700" />
+                style="@style/Widget.MaterialRatingBar.RatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:isIndicator="true"
+                android:numStars="5"
+                app:mrb_progressTint="#FFC107"
+                app:mrb_secondaryProgressTint="#FFC107" />
 
             <TextView
                 android:id="@+id/averageRating"

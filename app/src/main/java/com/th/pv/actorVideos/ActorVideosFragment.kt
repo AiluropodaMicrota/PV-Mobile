@@ -130,7 +130,7 @@ class ActorVideosFragment : Fragment() {
     }
 
     fun onDialogPositiveClick(dialog : DialogFragment) {
-        val ratingBar = dialog.dialog!!.findViewById<RatingBar>(R.id.filterMinRatingBar)
+        val ratingBar = dialog.dialog!!.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.filterMinRatingBar)
         filter.minRating = (ratingBar.rating * 2).toInt()
         filter.onlyFavourite = dialog.dialog!!.findViewById<CheckBox>(R.id.onlyFavouriteCheckbox).isChecked
         update()

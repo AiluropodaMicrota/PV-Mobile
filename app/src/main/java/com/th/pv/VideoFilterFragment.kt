@@ -19,7 +19,7 @@ class VideoFilterFragment(
             val inflater = requireActivity().layoutInflater;
             val root = inflater.inflate(R.layout.actor_videos_filter, null)
 
-            root.findViewById<RatingBar>(R.id.filterMinRatingBar).rating = listener.filter.minRating.toFloat() / 2
+            root.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.filterMinRatingBar).rating = listener.filter.minRating.toFloat() / 2
             root.findViewById<CheckBox>(R.id.onlyFavouriteCheckbox).isChecked = listener.filter.onlyFavourite
 
             builder.setView(root)

@@ -29,20 +29,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-    <com.th.pv.FontAwesome
+    <me.zhanghai.android.materialratingbar.MaterialRatingBar
         android:id="@+id/actor_rating"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingLeft="16dp"
-        android:paddingTop="4dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="4dp"
-        android:singleLine="true"
-        android:text=""
-        android:textColor="#FFD700"
-        android:textSize="14sp"
+        style="@style/Widget.MaterialRatingBar.RatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:isIndicator="true"
+        android:numStars="5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:mrb_progressTint="#FFC107"
+        app:mrb_secondaryProgressTint="#FFC107" />
 </androidx.constraintlayout.widget.ConstraintLayout>
