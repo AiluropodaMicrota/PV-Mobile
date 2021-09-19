@@ -28,10 +28,20 @@ class VideoSortFragment (
             val root = inflater.inflate(R.layout.actor_videos_sort, null)
 
             val sortTypeSpinner = root.findViewById<Spinner>(R.id.sort_type_spinner)
-            if (listener.sorter.type == VideoSort.Type.RATING)
-                sortTypeSpinner.setSelection(0)
-            else if (listener.sorter.type == VideoSort.Type.DURATION)
-                sortTypeSpinner.setSelection(1)
+            sortTypeSpinner.setSelection(
+                    when(listener.sorter.type) {
+                        VideoSort.Type.RATING -> 0
+                        VideoSort.Type.DURATION -> 1
+                        VideoSort.Type.ALPHABETICAL -> 2
+                        VideoSort.Type.RESOLUTION -> 3
+                        VideoSort.Type.SIZE -> 4
+                        VideoSort.Type.ADDED_ON -> 5
+                        VideoSort.Type.LAST_VIEWED -> 6
+                        VideoSort.Type.VIEWS -> 7
+                        VideoSort.Type.RANDOM -> 8
+                        else -> 0
+                    }
+            )
 
             val sortDirSpinner = root.findViewById<Spinner>(R.id.sort_direction_spinner)
             if (listener.sorter.ascending)
@@ -42,10 +52,18 @@ class VideoSortFragment (
             builder.setView(root)
                     .setPositiveButton("Ok"
                     ) { dialog, id ->
-                        if (sortTypeSpinner.selectedItemId == 0L)
-                            newSort.type = VideoSort.Type.RATING
-                        else if (sortTypeSpinner.selectedItemId == 1L)
-                            newSort.type = VideoSort.Type.DURATION
+                        newSort.type = when(sortTypeSpinner.selectedItemId) {
+                            0L -> VideoSort.Type.RATING
+                            1L -> VideoSort.Type.DURATION
+                            2L -> VideoSort.Type.ALPHABETICAL
+                            3L -> VideoSort.Type.RESOLUTION
+                            4L -> VideoSort.Type.SIZE
+                            5L -> VideoSort.Type.ADDED_ON
+                            6L -> VideoSort.Type.LAST_VIEWED
+                            7L -> VideoSort.Type.VIEWS
+                            8L -> VideoSort.Type.RANDOM
+                            else -> VideoSort.Type.RATING
+                        }
 
                         newSort.ascending = (sortDirSpinner.selectedItemId == 0L)
 

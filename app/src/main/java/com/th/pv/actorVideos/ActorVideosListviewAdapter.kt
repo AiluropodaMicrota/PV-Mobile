@@ -28,9 +28,14 @@ class ActorVideosListviewAdapter(
 ) : ArrayAdapter<String>(context, resource) {
 
     private var layoutInflater: LayoutInflater? = null
+    var videosList : MutableList<String> = mutableListOf()
 
     override fun getCount(): Int {
-        return pvData.filterVideos(filter).size
+        return videosList.size
+    }
+
+    fun update() {
+        videosList = pvData.getVideos(filter, sorter)
     }
 
     @SuppressLint("ResourceType")
@@ -48,7 +53,7 @@ class ActorVideosListviewAdapter(
             convertView = layoutInflater!!.inflate(R.layout.actor_videos_grid_item, null)
         }
 
-        val video = pvData.getVideo(filter, sorter, position)
+        val video = pvData.videos[videosList[position]]!!
 
         val imageView = convertView!!.findViewById<ImageView>(R.id.gridActorVideos_imageView)
         val textView = convertView.findViewById<TextView>(R.id.gridActorVideos_textView)

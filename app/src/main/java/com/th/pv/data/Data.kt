@@ -3,6 +3,7 @@ package com.th.pv.data
 import android.util.Log
 import com.th.pv.ip
 import com.th.pv.password
+import com.th.pv.toMutableList
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -15,13 +16,18 @@ data class PVData(
         val markers : MutableMap<String, ActorVideoMarker> = mutableMapOf(),
         val labels : MutableMap<String, ActorVideoLabel> = mutableMapOf()
 ) {
-    fun getVideo(filter : VideoFilter, sorter : VideoSort, position: Int) : ActorVideo {
+    fun getVideos(filter : VideoFilter, sorter : VideoSort) : MutableList<String> {
         val vids = filterVideos(filter)
-        vids.sortWith(sorter.comparator(this))
-        if (!sorter.ascending)
-            vids.reverse()
-        
-        return videos[vids[position]]!!
+
+        if (sorter.type == VideoSort.Type.RANDOM)
+            vids.shuffle()
+        else {
+            vids.sortWith(sorter.comparator(this))
+            if (!sorter.ascending)
+                vids.reverse()
+        }
+
+        return vids
     }
 
     fun filterVideos(filter : VideoFilter) : MutableList<String> {
@@ -156,7 +162,9 @@ data class PVData(
                 preview,
                 vid.getInt("rating"),
                 parseMeta(vid.getJSONObject("meta")),
-                vid.getBoolean("favorite")
+                vid.getBoolean("favorite"),
+                vid.getLong("addedOn"),
+                vid.getJSONArray("watches").toMutableList()
             )
         } else {
             videos[id]!!.name = vid.getString("name")
@@ -165,6 +173,8 @@ data class PVData(
             videos[id]!!.rating = vid.getInt("rating")
             videos[id]!!.meta = parseMeta(vid.getJSONObject("meta"))
             videos[id]!!.favorite = vid.getBoolean("favorite")
+            videos[id]!!.addedOn = vid.getLong("addedOn")
+            videos[id]!!.watches = vid.getJSONArray("watches").toMutableList()
         }
 
         //Add actors to video

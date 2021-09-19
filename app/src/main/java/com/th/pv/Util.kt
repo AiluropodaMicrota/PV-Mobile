@@ -7,6 +7,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.th.pv.data.ActorImage
 import com.th.pv.data.PVData
+import org.json.JSONArray
+
+fun JSONArray.toMutableList(): MutableList<Long> = MutableList(length(), this::getLong)
 
 fun glideLoadInto(context: Context, imageView : ImageView, pvData: PVData, image : ActorImage?) {
     if (image != null) {

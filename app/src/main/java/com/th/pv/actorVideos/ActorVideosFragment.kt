@@ -66,7 +66,7 @@ class ActorVideosFragment : Fragment() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val itemInfo : AdapterView.AdapterContextMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
-        val vid = pvData.getVideo(filter, sorter, itemInfo.position)
+        val vid = pvData.videos[listViewAdapter!!.videosList[itemInfo.position]]!!
 
         when(item.itemId) {
             R.id.action_video_download -> {
@@ -93,7 +93,7 @@ class ActorVideosFragment : Fragment() {
             R.id.action_video_info -> {
                 AlertDialog.Builder(context)
                     .setTitle(vid.name)
-                    .setMessage(vid.meta.toString() )
+                    .setMessage(vid.toString() )
                     .setPositiveButton("OK") {dialog, which ->  dialog.cancel()}
                     .show()
 
@@ -122,12 +122,13 @@ class ActorVideosFragment : Fragment() {
 
         listView = view.findViewById(R.id.list_actorVideos)
         listViewAdapter = ActorVideosListviewAdapter(pvData, filter, sorter, view.context, R.layout.actor_videos_grid_item)
+        listViewAdapter!!.update()
         listView!!.adapter = listViewAdapter
 
         registerForContextMenu(listView!!)
 
         listView!!.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val bundle = bundleOf("videoId" to pvData.filterVideos(filter)[position])
+            val bundle = bundleOf("videoId" to listViewAdapter!!.videosList[position])
             findNavController().navigate(R.id.action_actorVideosFragment_to_videoPlayer, bundle)
         }
     }
@@ -145,6 +146,7 @@ class ActorVideosFragment : Fragment() {
     }
 
     fun update() {
+        listViewAdapter?.update()
         listViewAdapter?.notifyDataSetChanged()
         listView?.invalidateViews()
     }
