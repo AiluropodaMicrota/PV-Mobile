@@ -59,7 +59,7 @@ class VideoFilterFragment(
             builder.setView(root)
                     .setPositiveButton("Ok (" + listener.pvData.filterVideos(newFilter).size + " videos)"
                     ) { dialog, id ->
-                        listener.onDialogPositiveClick(this)
+                        listener.onFilterDialogPositiveClick(this)
                     }
                     .setNegativeButton("Cancel"
                     ) { dialog, id ->

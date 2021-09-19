@@ -4,6 +4,14 @@
     tools:context="com.th.pv.MainActivity">
 
     <item
+        android:id="@+id/sort_videos"
+        android:icon="@drawable/ic_sort"
+        android:orderInCategory="100"
+        android:title="Sort videos"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/filter_videos"
         android:icon="@drawable/ic_filter"
         android:orderInCategory="101"

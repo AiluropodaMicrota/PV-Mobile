@@ -18,6 +18,7 @@ import com.th.pv.*
 import com.th.pv.data.*
 import java.io.File
 import java.lang.Exception
+import java.text.FieldPosition
 
 
 class ActorVideosFragment : Fragment() {
@@ -26,6 +27,7 @@ class ActorVideosFragment : Fragment() {
     var listView : ListView? = null
     var listViewAdapter: ActorVideosListviewAdapter? = null
     var filter : VideoFilter = VideoFilter()
+    var sorter : VideoSort = VideoSort()
     var progressBar : CircularProgressBar? = null
     var progressText : TextView? = null
 
@@ -64,7 +66,7 @@ class ActorVideosFragment : Fragment() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val itemInfo : AdapterView.AdapterContextMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
-        val vid = pvData.videos[pvData.filterVideos(filter)[itemInfo.position]]!!
+        val vid = pvData.getVideo(filter, sorter, itemInfo.position)
 
         when(item.itemId) {
             R.id.action_video_download -> {
@@ -119,7 +121,7 @@ class ActorVideosFragment : Fragment() {
         }
 
         listView = view.findViewById(R.id.list_actorVideos)
-        listViewAdapter = ActorVideosListviewAdapter(pvData, filter, view.context, R.layout.actor_videos_grid_item)
+        listViewAdapter = ActorVideosListviewAdapter(pvData, filter, sorter, view.context, R.layout.actor_videos_grid_item)
         listView!!.adapter = listViewAdapter
 
         registerForContextMenu(listView!!)
@@ -130,9 +132,15 @@ class ActorVideosFragment : Fragment() {
         }
     }
 
-    fun onDialogPositiveClick(dialog : VideoFilterFragment) {
+    fun onFilterDialogPositiveClick(dialog : VideoFilterFragment) {
         filter = dialog.newFilter.copy()
         listViewAdapter!!.filter = filter
+        update()
+    }
+
+    fun onSortDialogPositiveClick(dialog : VideoSortFragment) {
+        sorter = dialog.newSort.copy()
+        listViewAdapter!!.sorter = sorter
         update()
     }
 

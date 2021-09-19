@@ -4,4 +4,14 @@
         <item>0.0</item>
         <item>100.0</item>
     </array>
+
+    <string-array name="video_sort_options">
+        <item>Rating</item>
+        <item>Duration</item>
+    </string-array>
+    
+    <string-array name="video_sort_direction_options">
+        <item>Ascending</item>
+        <item>Descending</item>
+    </string-array>
 </resources>

@@ -118,6 +118,7 @@ import kotlin.math.min
         currentFragment = fragment
 
         optionsMenu?.findItem(R.id.filter_videos)?.isVisible = fragment is ActorVideosFragment
+        optionsMenu?.findItem(R.id.sort_videos)?.isVisible = fragment is ActorVideosFragment
     }
 
     fun onLoginSuccessful() {
@@ -160,6 +161,10 @@ import kotlin.math.min
         else if (item.itemId == R.id.filter_videos) {
             val frag = VideoFilterFragment(currentFragment as ActorVideosFragment)
             frag.show(supportFragmentManager, "video_filter")
+        }
+        else if (item.itemId == R.id.sort_videos) {
+            val frag = VideoSortFragment(currentFragment as ActorVideosFragment)
+            frag.show(supportFragmentManager, "video_sorter")
         }
 
         return super.onOptionsItemSelected(item)

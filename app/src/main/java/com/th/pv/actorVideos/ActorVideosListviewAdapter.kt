@@ -21,7 +21,8 @@ import com.th.pv.data.*
 
 class ActorVideosListviewAdapter(
         private var pvData: PVData,
-        var filter: VideoFilter,
+        var filter : VideoFilter,
+        var sorter : VideoSort,
         context : Context,
         resource : Int
 ) : ArrayAdapter<String>(context, resource) {
@@ -47,7 +48,7 @@ class ActorVideosListviewAdapter(
             convertView = layoutInflater!!.inflate(R.layout.actor_videos_grid_item, null)
         }
 
-        val video = pvData.videos[pvData.filterVideos(filter)[position]]!!
+        val video = pvData.getVideo(filter, sorter, position)
 
         val imageView = convertView!!.findViewById<ImageView>(R.id.gridActorVideos_imageView)
         val textView = convertView.findViewById<TextView>(R.id.gridActorVideos_textView)

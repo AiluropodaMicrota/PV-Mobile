@@ -15,6 +15,15 @@ data class PVData(
         val markers : MutableMap<String, ActorVideoMarker> = mutableMapOf(),
         val labels : MutableMap<String, ActorVideoLabel> = mutableMapOf()
 ) {
+    fun getVideo(filter : VideoFilter, sorter : VideoSort, position: Int) : ActorVideo {
+        val vids = filterVideos(filter)
+        vids.sortWith(sorter.comparator(this))
+        if (!sorter.ascending)
+            vids.reverse()
+        
+        return videos[vids[position]]!!
+    }
+
     fun filterVideos(filter : VideoFilter) : MutableList<String> {
         val list = mutableListOf<String>()
 
