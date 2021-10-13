@@ -146,6 +146,9 @@ import kotlin.math.min
         optionsMenu = menu
         model.loggedIn.postValue(model.loggedIn.value)
 
+        optionsMenu!!.findItem(R.id.filter_videos)?.isVisible = currentFragment is ActorVideosFragment
+        optionsMenu!!.findItem(R.id.sort_videos)?.isVisible = currentFragment is ActorVideosFragment
+
         return true
     }
 

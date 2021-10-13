@@ -49,6 +49,9 @@ class VideoSortFragment (
             else
                 sortDirSpinner.setSelection(1)
 
+            val loadedFirstCheckBox = root.findViewById<CheckBox>(R.id.loaded_first)
+            loadedFirstCheckBox.isChecked = listener.sorter.loadedFirst
+
             builder.setView(root)
                     .setPositiveButton("Ok"
                     ) { dialog, id ->
@@ -66,6 +69,7 @@ class VideoSortFragment (
                         }
 
                         newSort.ascending = (sortDirSpinner.selectedItemId == 0L)
+                        newSort.loadedFirst = loadedFirstCheckBox.isChecked
 
                         listener.onSortDialogPositiveClick(this)
                     }

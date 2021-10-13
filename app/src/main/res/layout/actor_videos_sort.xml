@@ -27,4 +27,10 @@
         android:layout_marginTop="@dimen/grid_spacing"
         android:entries="@array/video_sort_direction_options" />
 
+    <CheckBox
+        android:id="@+id/loaded_first"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Loaded videos first" />
+
 </LinearLayout>

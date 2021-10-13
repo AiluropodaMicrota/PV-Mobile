@@ -21,11 +21,8 @@ data class PVData(
 
         if (sorter.type == VideoSort.Type.RANDOM)
             vids.shuffle()
-        else {
+        else
             vids.sortWith(sorter.comparator(this))
-            if (!sorter.ascending)
-                vids.reverse()
-        }
 
         return vids
     }
