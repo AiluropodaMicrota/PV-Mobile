@@ -3,8 +3,10 @@ package com.th.pv.actorVideos
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.text.format.DateUtils
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,9 +64,9 @@ class ActorVideosListviewAdapter(
 
         textView.text = video.name
         if (video.loaded)
-            textView.setTextColor(Color.BLACK)
+            textView.setTypeface(null, Typeface.BOLD)
         else
-            textView.setTextColor(Color.GRAY)
+            textView.setTypeface(null, Typeface.NORMAL)
 
         video.meta.duration?.let {
             convertView.findViewById<TextView>(R.id.gridActorVideos_duration).text =
@@ -81,7 +83,7 @@ class ActorVideosListviewAdapter(
         params.setMargins(4, 4, 4, 4)
 
         for (i in video.labels) {
-            var label = TextView(context)
+            val label = TextView(ContextThemeWrapper(context, R.style.Theme_PV), null, 0)
             label.setPadding(16, 8, 16, 8)
             label.layoutParams = params
             label.text = pvData.labels[i]!!.name

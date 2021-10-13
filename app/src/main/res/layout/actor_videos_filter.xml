@@ -41,10 +41,10 @@
 
     <TextView
         android:id="@+id/textView7"
+        style="@style/Theme.PV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Duration"
-        android:textColor="@android:color/primary_text_light"
         android:textSize="18sp" />
 
     <com.google.android.material.slider.RangeSlider

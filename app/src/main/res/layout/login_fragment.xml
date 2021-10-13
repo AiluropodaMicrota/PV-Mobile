@@ -44,6 +44,7 @@
 
     <Button
         android:id="@+id/buttonConnect"
+        style="@style/Theme.PV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Connect" />

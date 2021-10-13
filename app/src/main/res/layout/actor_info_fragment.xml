@@ -48,6 +48,7 @@
 
             <TextView
                 android:id="@+id/averageRating"
+                style="@style/Theme.PV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -55,11 +56,11 @@
                 android:paddingTop="4dp"
                 android:paddingRight="16dp"
                 android:paddingBottom="4dp"
-                android:text=""
-                android:textColor="@color/black" />
+                android:text="" />
 
             <TextView
                 android:id="@+id/score"
+                style="@style/Theme.PV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -67,8 +68,7 @@
                 android:paddingTop="4dp"
                 android:paddingRight="16dp"
                 android:paddingBottom="4dp"
-                android:text=""
-                android:textColor="@color/black" />
+                android:text="" />
 
             <Button
                 android:id="@+id/scenesButton"
