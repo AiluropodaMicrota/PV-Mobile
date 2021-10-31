@@ -32,11 +32,12 @@
 
     <me.zhanghai.android.materialratingbar.MaterialRatingBar
         android:id="@+id/actor_rating"
-        style="@style/Widget.MaterialRatingBar.RatingBar"
         android:layout_width="wrap_content"
         android:layout_height="16dp"
-        android:isIndicator="true"
+        android:layout_gravity="center"
         android:numStars="5"
+        android:isIndicator="true"
+        app:mrb_fillBackgroundStars="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"

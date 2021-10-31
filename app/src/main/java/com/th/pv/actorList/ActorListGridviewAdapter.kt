@@ -1,5 +1,6 @@
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -64,7 +65,7 @@ class ActorListGridviewAdapter (
         glideLoadInto(context, imageView, pvData, pvData.images[actor.thumbnail])
 
         val ratingView = convertView.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.actor_rating)
-        ratingView.rating = (actor.rating / 2).toFloat()
+        ratingView.rating = actor.rating.toFloat() / 2
 
         textView.text = actor.name
         return convertView

@@ -48,7 +48,7 @@ class ActorInfoFragment : Fragment() {
         view.findViewById<TextView>(R.id.score).text = "PV score: %.1f".format(Locale.US, actor.score)
 
         val ratingView = view.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.rating)
-        ratingView.rating = (actor.rating / 2).toFloat()
+        ratingView.rating = actor.rating.toFloat() / 2
 
         view.findViewById<Button>(R.id.scenesButton).setOnClickListener {
             val bundle = bundleOf("actorId" to actor.id)

@@ -37,11 +37,11 @@
 
             <me.zhanghai.android.materialratingbar.MaterialRatingBar
                 android:id="@+id/rating"
+                app:mrb_fillBackgroundStars="false"
                 style="@style/Widget.MaterialRatingBar.RatingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:isIndicator="true"
                 android:numStars="5"
                 app:mrb_progressTint="#FFC107"
                 app:mrb_secondaryProgressTint="#FFC107" />
