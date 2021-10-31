@@ -1,7 +1,7 @@
 package com.th.pv
 
-import android.os.Environment
 import android.os.Handler
+import android.util.Log
 import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Ion
 import com.th.pv.actorVideos.ActorVideosFragment
@@ -9,24 +9,25 @@ import com.th.pv.data.Actor
 import com.th.pv.data.ActorImage
 import com.th.pv.data.ActorVideo
 import com.th.pv.data.PVData
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 
+
 var httpClient = OkHttpClient()
 var ip = ""
 var password = ""
 
-fun downloadVideo(activity : MainActivity, videosFragment: ActorVideosFragment, pvData: PVData, video : ActorVideo, callback : FutureCallback<File>) {
+fun downloadVideo(activity: MainActivity, videosFragment: ActorVideosFragment, pvData: PVData, video: ActorVideo, callback: FutureCallback<File>) {
     video.loaded = false
 
     val url = pvData.getVideoPath(video)
     val f = File(pvData.savePath + "/videos/" +
-                if (video.actors.isEmpty()) "_Other" else pvData.actors[video.actors[0]]!!.name
+            if (video.actors.isEmpty()) "_Other" else pvData.actors[video.actors[0]]!!.name
     ) //TODO: lookup all actors
     if (!f.exists())
         f.mkdirs()
@@ -51,7 +52,7 @@ fun downloadVideo(activity : MainActivity, videosFragment: ActorVideosFragment, 
         }
 }
 
-fun downloadImages(activity: MainActivity, downloadFinishedHandler : Handler, imagesLoadedBeforeCount : Int) {
+fun downloadImages(activity: MainActivity, downloadFinishedHandler: Handler, imagesLoadedBeforeCount: Int) {
     var imageToDownload : ActorImage? = null
     var pvData = activity.model.pvData
 
@@ -83,9 +84,9 @@ fun downloadImages(activity: MainActivity, downloadFinishedHandler : Handler, im
                             / (pvData.images.count() - imagesLoadedBeforeCount) * 100
                         ).toInt()
                 activity.notificationBuilder?.setProgress(
-                    100,
-                    downloadingProgress,
-                    false
+                        100,
+                        downloadingProgress,
+                        false
                 )
                 activity.notificationBuilder?.setContentText("$downloadingProgress%")
                 activity.notificationManager?.notify(activity.downloadingProgressNotificationId, activity.notificationBuilder?.build())
@@ -96,7 +97,29 @@ fun downloadImages(activity: MainActivity, downloadFinishedHandler : Handler, im
     }
 }
 
-fun actorImagesQuery(activity : MainActivity, actor : Actor) {
+fun postActorRating(activity: MainActivity, actor: Actor) {
+    val body = "{\"operationName\":null,\"variables\":{\"ids\":[\"" + actor.id + "\"],\"opts\":{\"rating\":" + actor.rating + "}},\"query\":\"mutation (\$ids: [String!]!, \$opts: ActorUpdateOpts!) {\\n  updateActors(ids: \$ids, opts: \$opts) {\\n    rating\\n    __typename\\n  }\\n}\\n\"}"
+    val url = ip + "/api/ql?password=" + password
+    val client = OkHttpClient()
+    val JSON = "application/json; charset=utf-8".toMediaType()
+    val postBody = body.toRequestBody(JSON)
+
+    val post = okhttp3.Request.Builder().url(url).post(postBody).build()
+    httpClient.newCall(post).enqueue(object : Callback {
+        override fun onResponse(call: Call, response: okhttp3.Response) {
+            if (response.isSuccessful) {
+                //Log.d("PV", "Actor rating post successfull")
+            } else
+                activity.model.updateServerStatus(ServerStatus.OFFLINE)
+        }
+
+        override fun onFailure(call: Call, e: IOException) {
+            defaultOnFailure(activity, e)
+        }
+    })
+}
+
+fun actorImagesQuery(activity: MainActivity, actor: Actor) {
     val query = "query (\$query: ImageSearchQuery!) { getImages(query: \$query) { items { ...ImageFragment labels { _id name __typename } studio { _id name __typename } actors { ...ActorFragment avatar { _id color __typename } __typename } scene { _id name __typename } __typename } __typename }}fragment ImageFragment on Image { _id name bookmark favorite rating __typename}fragment ActorFragment on Actor { _id name description bornOn age aliases rating favorite bookmark customFields availableFields { _id name type values unit __typename } nationality { name alpha2 nationality __typename } __typename}"
     val variables = "{\"query\":{\"sortDir\":\"asc\",\"sortBy\":\"addedOn\",\"take\":10000,\"actors\":[\"" + actor.id + "\"]}}"
 
@@ -111,8 +134,7 @@ fun actorImagesQuery(activity : MainActivity, actor : Actor) {
                 activity.mHandler.post {
                     activity.parseImagesResponse(actor, body)
                 }
-            }
-            else
+            } else
                 activity.model.updateServerStatus(ServerStatus.OFFLINE)
         }
 
@@ -122,7 +144,7 @@ fun actorImagesQuery(activity : MainActivity, actor : Actor) {
     })
 }
 
-fun videosQuery(activity: MainActivity, take : Int, page : Int, actor : Actor?) {
+fun videosQuery(activity: MainActivity, take: Int, page: Int, actor: Actor?) {
     val query = "query (\$query: SceneSearchQuery!, \$seed: String) {  getScenes(query: \$query, seed: \$seed) {    items { ...SceneFragment      actors {        ...ActorFragment        __typename      }  preview {      _id      meta {        dimensions {          width          height          __typename        }        __typename      }      __typename    }  markers {      _id      name      time      labels {        _id        name        color        __typename      }     thumbnail {        _id        __typename      }      __typename    }   studio {        ...StudioFragment        __typename      }      __typename    }    numItems    numPages    __typename  }}fragment SceneFragment on Scene {  _id  addedOn  name  releaseDate  description  rating  favorite  bookmark  studio {    _id    name    __typename  }  labels {    _id    name    color    __typename  }  thumbnail {    _id    color    __typename  }  meta {    size    duration  bitrate  fps    dimensions {      width      height      __typename    }    __typename  }  watches  streamLinks  path  customFields  availableFields {    _id    name    type    values    unit    __typename  }  __typename}fragment ActorFragment on Actor {  _id  name  description  bornOn  age  aliases  rating  favorite  bookmark  customFields  availableFields {    _id    name    type    values    unit    __typename  }  nationality {    name    alpha2    nationality    __typename  }  __typename}fragment StudioFragment on Studio {  _id  name  description  aliases  rating  favorite  bookmark  __typename}"
     var variables = "{\"query\":{\"query\":\"\",\"take\":" + take + ",\"page\":" + page + ",\"actors\":["
     variables += if (actor != null) "\""+ actor.id + "\"" else ""
@@ -141,8 +163,7 @@ fun videosQuery(activity: MainActivity, take : Int, page : Int, actor : Actor?) 
                 activity.mHandler.post {
                     activity.parseVideosResponse(actor, page, body)
                 }
-            }
-            else
+            } else
                 activity.model.updateServerStatus(ServerStatus.OFFLINE)
         }
 
@@ -152,7 +173,7 @@ fun videosQuery(activity: MainActivity, take : Int, page : Int, actor : Actor?) 
     })
 }
 
-fun topActorsQuery(activity: MainActivity, take : Int) {
+fun topActorsQuery(activity: MainActivity, take: Int) {
     val query = "{topActors(skip: 0, take: " + take + ") " +
             "{_id name rating averageRating score labels {_id name color __typename} thumbnail {_id __typename} avatar {_id __typename} __typename}}"
 
@@ -167,8 +188,7 @@ fun topActorsQuery(activity: MainActivity, take : Int) {
                 activity.mHandler.post {
                     activity.parseTopActorsResponse(body)
                 }
-            }
-            else
+            } else
                 activity.model.updateServerStatus(ServerStatus.OFFLINE)
         }
 
@@ -194,8 +214,7 @@ fun statQuery(activity: MainActivity) {
                 activity.mHandler.post {
                     activity.parseStats(body)
                 }
-            }
-            else
+            } else
                 activity.model.updateServerStatus(ServerStatus.OFFLINE)
         }
 
@@ -205,7 +224,7 @@ fun statQuery(activity: MainActivity) {
     })
 }
 
-fun defaultOnFailure(activity : MainActivity, e : IOException) {
+fun defaultOnFailure(activity: MainActivity, e: IOException) {
     val error = if (e.message != null) e.message!! else "No error message provided"
 
     activity.mHandler.post {

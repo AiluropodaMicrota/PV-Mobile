@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
@@ -16,6 +18,7 @@ import com.google.android.material.tabs.TabLayout
 import com.th.pv.data.Actor
 import com.th.pv.data.PVData
 import java.util.*
+import kotlin.math.round
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -44,11 +47,16 @@ class ActorInfoFragment : Fragment() {
         actor = pvData.actors[arguments?.getString("actorId")!!]!!
         requireActivity().title = actor.name
 
-        view.findViewById<TextView>(R.id.averageRating).text = "Average scene rating: %.1f".format(Locale.US, actor.rating)
-        view.findViewById<TextView>(R.id.score).text = "PV score: %.1f".format(Locale.US, actor.score)
+        view.findViewById<TextView>(R.id.averageRating).text = if (actor.isAlbum()) "" else "Average scene rating: %.1f".format(Locale.US, actor.rating)
+        view.findViewById<TextView>(R.id.score).text = if (actor.isAlbum()) "" else "PV score: %.1f".format(Locale.US, actor.score)
+        view.findViewById<Button>(R.id.scenesButton).visibility = if (actor.isAlbum()) INVISIBLE else VISIBLE
 
         val ratingView = view.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.rating)
         ratingView.rating = actor.rating.toFloat() / 2
+        ratingView.setOnRatingChangeListener { ratingBar, rating ->
+            actor.rating = round(rating.toDouble() * 2)
+            postActorRating(activity as MainActivity, actor)
+        }
 
         view.findViewById<Button>(R.id.scenesButton).setOnClickListener {
             val bundle = bundleOf("actorId" to actor.id)

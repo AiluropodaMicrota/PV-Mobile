@@ -57,10 +57,7 @@ class ActorListFragment : Fragment() {
             val actor = gridViewAdapter.getItem(position)!!
             val bundle = bundleOf("actorId" to actor.id)
 
-            if (actor.isAlbum())
-                findNavController().navigate(R.id.action_actorsListFragment_to_actorImagesFragment, bundle)
-            else
-                findNavController().navigate(R.id.action_actorsListFragment_to_actorInfoFragment, bundle)
+            findNavController().navigate(R.id.action_actorsListFragment_to_actorInfoFragment, bundle)
         }
     }
 
