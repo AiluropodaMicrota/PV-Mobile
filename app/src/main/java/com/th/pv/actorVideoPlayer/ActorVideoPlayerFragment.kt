@@ -4,15 +4,11 @@ import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -25,6 +21,7 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.th.pv.MainActivity
 import com.th.pv.R
+import com.th.pv.VideoEditFragment
 import com.th.pv.data.ActorVideo
 import com.th.pv.data.ActorVideoMarker
 import com.th.pv.data.PVData
@@ -105,6 +102,8 @@ class ActorVideoPlayerFragment : Fragment() {
             videoplayer?.prepare(it)
         }
 
+        view.findViewById<TextView>(R.id.videoTitle).text = video.name
+
         video.preview?.let {
             //imageScale = view.width.toDouble() / (it.meta.width / 100) * 0.25
 
@@ -159,6 +158,11 @@ class ActorVideoPlayerFragment : Fragment() {
             })
         }
 
+        val btnMenu = view.findViewById<ImageButton>(R.id.exo_menu)
+        btnMenu.setOnClickListener{
+            onMenuClicked(btnMenu, video)
+        }
+
         view.findViewById<ImageButton>(R.id.prev_marker).setOnClickListener {
             onPrevMarkerClicked(video)
         }
@@ -171,6 +175,24 @@ class ActorVideoPlayerFragment : Fragment() {
             videoview.layoutParams.width = ViewGroup.LayoutParams.FILL_PARENT
             videoview.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
         }
+    }
+
+    fun onMenuClicked(view : View, video : ActorVideo) {
+        val popup = PopupMenu(activity, view)
+        popup.inflate(R.menu.video_player_menu)
+
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.editVideo -> {
+                    val frag = VideoEditFragment(video)
+                    frag.show(requireActivity().supportFragmentManager, "video_edit")
+                }
+            }
+
+            true
+        }
+
+        popup.show()
     }
 
     fun onPrevMarkerClicked(video : ActorVideo) {

@@ -99,6 +99,12 @@ class ActorVideosFragment : Fragment() {
 
                 return true
             }
+            R.id.action_video_edit -> {
+                val frag = VideoEditFragment(vid)
+                frag.show(requireActivity().supportFragmentManager, "video_edit")
+
+                return true
+            }
             else -> return super.onContextItemSelected(item)
         }
     }

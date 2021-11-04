@@ -97,10 +97,30 @@ fun downloadImages(activity: MainActivity, downloadFinishedHandler: Handler, ima
     }
 }
 
+fun postVideoRating(activity: MainActivity, video: ActorVideo) {
+    val body = "{\"operationName\":null,\"variables\":{\"ids\":[\"" + video.id + "\"],\"opts\":{\"rating\":" + video.rating + "}},\"query\":\"mutation (\$ids: [String!]!, \$opts: SceneUpdateOpts!) {\\n  updateScenes(ids: \$ids, opts: \$opts) {\\n    rating\\n    __typename\\n  }\\n}\\n\"}"
+    val url = ip + "/api/ql?password=" + password
+    val JSON = "application/json; charset=utf-8".toMediaType()
+    val postBody = body.toRequestBody(JSON)
+
+    val post = okhttp3.Request.Builder().url(url).post(postBody).build()
+    httpClient.newCall(post).enqueue(object : Callback {
+        override fun onResponse(call: Call, response: okhttp3.Response) {
+            if (response.isSuccessful) {
+                //Log.d("PV", "Actor rating post successfull")
+            } else
+                activity.model.updateServerStatus(ServerStatus.OFFLINE)
+        }
+
+        override fun onFailure(call: Call, e: IOException) {
+            defaultOnFailure(activity, e)
+        }
+    })
+}
+
 fun postActorRating(activity: MainActivity, actor: Actor) {
     val body = "{\"operationName\":null,\"variables\":{\"ids\":[\"" + actor.id + "\"],\"opts\":{\"rating\":" + actor.rating + "}},\"query\":\"mutation (\$ids: [String!]!, \$opts: ActorUpdateOpts!) {\\n  updateActors(ids: \$ids, opts: \$opts) {\\n    rating\\n    __typename\\n  }\\n}\\n\"}"
     val url = ip + "/api/ql?password=" + password
-    val client = OkHttpClient()
     val JSON = "application/json; charset=utf-8".toMediaType()
     val postBody = body.toRequestBody(JSON)
 

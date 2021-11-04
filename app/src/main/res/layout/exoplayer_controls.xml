@@ -13,10 +13,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="bottom"
     android:layoutDirection="ltr"
     android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/infoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#A0000000"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/exo_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:paddingLeft="@dimen/imageButtonPadding"
+            android:paddingRight="@dimen/imageButtonPadding"
+            app:srcCompat="@drawable/ic_more_vert" />
+
+        <TextView
+            android:id="@+id/videoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="@dimen/grid_spacing"
+            android:text="This is title"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/controlsLayout"
