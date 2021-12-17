@@ -55,7 +55,7 @@ class ActorInfoFragment : Fragment() {
         ratingView.rating = actor.rating.toFloat() / 2
         ratingView.setOnRatingChangeListener { ratingBar, rating ->
             actor.rating = round(rating.toDouble() * 2)
-            postActorRating(activity as MainActivity, actor)
+            postActorRating(activity as MainActivity, actor) {}
         }
 
         view.findViewById<Button>(R.id.scenesButton).setOnClickListener {

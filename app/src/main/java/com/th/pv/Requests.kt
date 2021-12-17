@@ -97,7 +97,7 @@ fun downloadImages(activity: MainActivity, downloadFinishedHandler: Handler, ima
     }
 }
 
-fun postVideoRating(activity: MainActivity, video: ActorVideo) {
+fun postVideoRating(activity: MainActivity, video: ActorVideo, onFinish : (Boolean) -> Unit) {
     val body = "{\"operationName\":null,\"variables\":{\"ids\":[\"" + video.id + "\"],\"opts\":{\"rating\":" + video.rating + "}},\"query\":\"mutation (\$ids: [String!]!, \$opts: SceneUpdateOpts!) {\\n  updateScenes(ids: \$ids, opts: \$opts) {\\n    rating\\n    __typename\\n  }\\n}\\n\"}"
     val url = ip + "/api/ql?password=" + password
     val JSON = "application/json; charset=utf-8".toMediaType()
@@ -107,9 +107,13 @@ fun postVideoRating(activity: MainActivity, video: ActorVideo) {
     httpClient.newCall(post).enqueue(object : Callback {
         override fun onResponse(call: Call, response: okhttp3.Response) {
             if (response.isSuccessful) {
+                onFinish(true)
                 //Log.d("PV", "Actor rating post successfull")
-            } else
+            }
+            else {
                 activity.model.updateServerStatus(ServerStatus.OFFLINE)
+                onFinish(false)
+            }
         }
 
         override fun onFailure(call: Call, e: IOException) {
@@ -118,7 +122,7 @@ fun postVideoRating(activity: MainActivity, video: ActorVideo) {
     })
 }
 
-fun postActorRating(activity: MainActivity, actor: Actor) {
+fun postActorRating(activity: MainActivity, actor: Actor, onFinish : (Boolean) -> Unit) {
     val body = "{\"operationName\":null,\"variables\":{\"ids\":[\"" + actor.id + "\"],\"opts\":{\"rating\":" + actor.rating + "}},\"query\":\"mutation (\$ids: [String!]!, \$opts: ActorUpdateOpts!) {\\n  updateActors(ids: \$ids, opts: \$opts) {\\n    rating\\n    __typename\\n  }\\n}\\n\"}"
     val url = ip + "/api/ql?password=" + password
     val JSON = "application/json; charset=utf-8".toMediaType()
@@ -128,9 +132,13 @@ fun postActorRating(activity: MainActivity, actor: Actor) {
     httpClient.newCall(post).enqueue(object : Callback {
         override fun onResponse(call: Call, response: okhttp3.Response) {
             if (response.isSuccessful) {
+                onFinish(true)
                 //Log.d("PV", "Actor rating post successfull")
-            } else
+            }
+            else {
                 activity.model.updateServerStatus(ServerStatus.OFFLINE)
+                onFinish(false)
+            }
         }
 
         override fun onFailure(call: Call, e: IOException) {

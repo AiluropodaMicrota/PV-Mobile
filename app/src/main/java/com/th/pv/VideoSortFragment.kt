@@ -14,11 +14,12 @@ import com.th.pv.data.VideoFilter
 import com.th.pv.data.VideoSort
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random
 
 class VideoSortFragment (
         val listener : ActorVideosFragment
 ) : DialogFragment() {
-    var newSort : VideoSort = listener.sorter.copy()
+    var newSort : VideoSort = listener.pvData.sorter.copy()
     lateinit var dialog : AlertDialog
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -29,7 +30,7 @@ class VideoSortFragment (
 
             val sortTypeSpinner = root.findViewById<Spinner>(R.id.sort_type_spinner)
             sortTypeSpinner.setSelection(
-                    when(listener.sorter.type) {
+                    when(listener.pvData.sorter.type) {
                         VideoSort.Type.RATING -> 0
                         VideoSort.Type.DURATION -> 1
                         VideoSort.Type.ALPHABETICAL -> 2
@@ -44,13 +45,13 @@ class VideoSortFragment (
             )
 
             val sortDirSpinner = root.findViewById<Spinner>(R.id.sort_direction_spinner)
-            if (listener.sorter.ascending)
+            if (listener.pvData.sorter.ascending)
                 sortDirSpinner.setSelection(0)
             else
                 sortDirSpinner.setSelection(1)
 
             val loadedFirstCheckBox = root.findViewById<CheckBox>(R.id.loaded_first)
-            loadedFirstCheckBox.isChecked = listener.sorter.loadedFirst
+            loadedFirstCheckBox.isChecked = listener.pvData.sorter.loadedFirst
 
             builder.setView(root)
                     .setPositiveButton("Ok"
@@ -70,6 +71,7 @@ class VideoSortFragment (
 
                         newSort.ascending = (sortDirSpinner.selectedItemId == 0L)
                         newSort.loadedFirst = loadedFirstCheckBox.isChecked
+                        newSort.randomSeed = Random.nextInt()
 
                         listener.onSortDialogPositiveClick(this)
                     }

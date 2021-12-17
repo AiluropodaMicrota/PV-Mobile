@@ -7,6 +7,7 @@ import com.th.pv.toMutableList
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
+import kotlin.random.Random
 
 data class PVData(
         val savePath: String,
@@ -14,17 +15,21 @@ data class PVData(
         val images : MutableMap<String, ActorImage> = mutableMapOf(),
         val videos : MutableMap<String, ActorVideo> = mutableMapOf(),
         val markers : MutableMap<String, ActorVideoMarker> = mutableMapOf(),
-        val labels : MutableMap<String, ActorVideoLabel> = mutableMapOf()
+        val labels : MutableMap<String, ActorVideoLabel> = mutableMapOf(),
+        var filter : VideoFilter = VideoFilter(),
+        var sorter : VideoSort = VideoSort()
 ) {
-    fun getVideos(filter : VideoFilter, sorter : VideoSort) : MutableList<String> {
-        val vids = filterVideos(filter)
+    fun getFilteredSortedVideos() : MutableList<String> {
+        val vids = mutableListOf<String>()
+        for (vid in videos.keys)
+            vids.add(vid)
 
         if (sorter.type == VideoSort.Type.RANDOM)
-            vids.shuffle()
+            vids.shuffle(Random(sorter.randomSeed))
         else
             vids.sortWith(sorter.comparator(this))
 
-        return vids
+        return filterVideos(vids)
     }
 
     fun filterVideos(filter : VideoFilter) : MutableList<String> {
@@ -34,7 +39,15 @@ data class PVData(
             if (filter.fits(videos[vid]!!))
                 list.add(vid)
 
-        list.sortBy { !videos[it]!!.loaded }
+        return list
+    }
+
+    fun filterVideos(vids : MutableList<String>) : MutableList<String> {
+        val list = mutableListOf<String>()
+
+        for (vid in vids)
+            if (filter.fits(videos[vid]!!))
+                list.add(vid)
 
         return list
     }

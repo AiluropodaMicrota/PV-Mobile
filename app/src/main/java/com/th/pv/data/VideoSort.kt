@@ -3,7 +3,8 @@ package com.th.pv.data
 data class VideoSort(
     var type : Type = Type.RATING,
     var ascending : Boolean = true,
-    var loadedFirst : Boolean = true
+    var loadedFirst : Boolean = true,
+    var randomSeed : Int = 808
 ) {
     enum class Type {
         RATING, DURATION, ALPHABETICAL, RESOLUTION, SIZE, ADDED_ON, LAST_VIEWED, VIEWS, RANDOM

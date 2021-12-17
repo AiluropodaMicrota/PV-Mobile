@@ -16,7 +16,7 @@ import kotlin.math.min
 class VideoFilterFragment(
         val listener : ActorVideosFragment
 ) : DialogFragment() {
-    var newFilter : VideoFilter = listener.filter.copy()
+    var newFilter : VideoFilter = listener.pvData.filter.copy()
     lateinit var dialog : AlertDialog
     lateinit var durationSlider : RangeSlider
     lateinit var durRangeText : TextView
@@ -28,14 +28,14 @@ class VideoFilterFragment(
             val root = inflater.inflate(R.layout.actor_videos_filter, null)
 
             val ratingBar = root.findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.filterMinRatingBar)
-            ratingBar.rating = listener.filter.minRating.toFloat() / 2
+            ratingBar.rating = listener.pvData.filter.minRating.toFloat() / 2
             ratingBar.setOnRatingChangeListener { ratingBar, rating ->
                 newFilter.minRating = (rating * 2).toInt()
                 updateFilter()
             }
 
             val favCheckBox = root.findViewById<CheckBox>(R.id.onlyFavouriteCheckbox)
-            favCheckBox.isChecked = listener.filter.onlyFavourite
+            favCheckBox.isChecked = listener.pvData.filter.onlyFavourite
             favCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
                 newFilter.onlyFavourite = isChecked
                 updateFilter()
@@ -44,8 +44,8 @@ class VideoFilterFragment(
             durationSlider = root.findViewById(R.id.durationSlider)
             durationSlider.valueTo = getDurationSliderValueTo()
             durationSlider.values = listOf(
-                listener.filter.minDuration.toFloat(),
-                min(durationSlider.valueTo, listener.filter.maxDuration.toFloat())
+                listener.pvData.filter.minDuration.toFloat(),
+                min(durationSlider.valueTo, listener.pvData.filter.maxDuration.toFloat())
             )
             durationSlider.addOnChangeListener { slider, value, fromUser ->
                 newFilter.minDuration = durationSlider.values[0].toDouble()

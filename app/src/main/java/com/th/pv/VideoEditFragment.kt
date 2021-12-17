@@ -30,7 +30,7 @@ class VideoEditFragment(var video : ActorVideo) : DialogFragment() {
                 .setPositiveButton("Ok"
                 ) { dialog, id ->
                     video.rating = round(ratingBar.rating * 2).toInt()
-                    postVideoRating(activity as MainActivity, video)
+                    postVideoRating(activity as MainActivity, video) {}
                     (activity as MainActivity).update()
                 }
                 .setNegativeButton("Cancel"

@@ -23,8 +23,6 @@ import com.th.pv.data.*
 
 class ActorVideosListviewAdapter(
         private var pvData: PVData,
-        var filter : VideoFilter,
-        var sorter : VideoSort,
         context : Context,
         resource : Int
 ) : ArrayAdapter<String>(context, resource) {
@@ -37,7 +35,7 @@ class ActorVideosListviewAdapter(
     }
 
     fun update() {
-        videosList = pvData.getVideos(filter, sorter)
+        videosList = pvData.getFilteredSortedVideos()
     }
 
     @SuppressLint("ResourceType")

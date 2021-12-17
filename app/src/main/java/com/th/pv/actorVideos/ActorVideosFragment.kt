@@ -26,8 +26,6 @@ class ActorVideosFragment : Fragment() {
 
     var listView : ListView? = null
     var listViewAdapter: ActorVideosListviewAdapter? = null
-    var filter : VideoFilter = VideoFilter()
-    var sorter : VideoSort = VideoSort()
     var progressBar : CircularProgressBar? = null
     var progressText : TextView? = null
 
@@ -117,7 +115,7 @@ class ActorVideosFragment : Fragment() {
         if (arguments?.containsKey("actorId")!!) {
             val actor = pvData.actors[arguments?.getString("actorId")!!]!!
             requireActivity().title = actor.name + " - Scenes"
-            filter.actorsOr.add(actor.id)
+            pvData.filter.actorsOr.add(actor.id)
 
             if ((activity as MainActivity).model.startupRequestFinished)
                 (activity as MainActivity).queryVideos(actor)
@@ -127,7 +125,7 @@ class ActorVideosFragment : Fragment() {
         }
 
         listView = view.findViewById(R.id.list_actorVideos)
-        listViewAdapter = ActorVideosListviewAdapter(pvData, filter, sorter, view.context, R.layout.actor_videos_grid_item)
+        listViewAdapter = ActorVideosListviewAdapter(pvData, view.context, R.layout.actor_videos_grid_item)
         listViewAdapter!!.update()
         listView!!.adapter = listViewAdapter
 
@@ -140,14 +138,14 @@ class ActorVideosFragment : Fragment() {
     }
 
     fun onFilterDialogPositiveClick(dialog : VideoFilterFragment) {
-        filter = dialog.newFilter.copy()
-        listViewAdapter!!.filter = filter
+        pvData.filter = dialog.newFilter.copy()
+        //listViewAdapter!!.filter = pvDafilter
         update()
     }
 
     fun onSortDialogPositiveClick(dialog : VideoSortFragment) {
-        sorter = dialog.newSort.copy()
-        listViewAdapter!!.sorter = sorter
+        pvData.sorter = dialog.newSort.copy()
+        //listViewAdapter!!.sorter = sorter
         update()
     }
 
