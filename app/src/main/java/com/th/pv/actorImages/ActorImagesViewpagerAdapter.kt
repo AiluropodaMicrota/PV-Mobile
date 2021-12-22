@@ -36,17 +36,16 @@ internal class ActorImagesViewpagerAdapter (
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val itemView: View = mLayoutInflater.inflate(R.layout.actor_images_viewpage_image_item, container, false)
 
-        val textView =
-                itemView.findViewById<View>(R.id.textViewMain) as TextView
-        var name = pvData.images[actor.images[position]]!!.name
-
+        val textView = itemView.findViewById<View>(R.id.imageName) as TextView
+        val name = pvData.images[actor.images[position]]!!.name
         if (name != null)
             textView.text = name
+        else
+            textView.text = actor.name
 
-        // referencing the image view from the item.xml file
-        val imageView =
-            itemView.findViewById<View>(R.id.imageViewMain) as ImageView
+        itemView.findViewById<TextView>(R.id.imageNum).text = (position + 1).toString() + "/" + getCount()
 
+        val imageView = itemView.findViewById<View>(R.id.imageViewMain) as ImageView
         glideLoadInto(context, imageView, pvData, pvData.images[actor.images[position]])
 
         Objects.requireNonNull(container).addView(itemView)

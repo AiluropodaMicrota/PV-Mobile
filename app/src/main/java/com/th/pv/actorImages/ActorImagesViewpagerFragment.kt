@@ -31,6 +31,7 @@ class ActorImagesViewpagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        (activity as MainActivity).onFragmentCreated(this)
 
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
