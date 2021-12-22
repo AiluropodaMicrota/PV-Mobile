@@ -98,7 +98,7 @@ class ActorVideosFragment : Fragment() {
                 return true
             }
             R.id.action_video_edit -> {
-                val frag = VideoEditFragment(vid)
+                val frag = VideoEditFragment(pvData, vid)
                 frag.show(requireActivity().supportFragmentManager, "video_edit")
 
                 return true

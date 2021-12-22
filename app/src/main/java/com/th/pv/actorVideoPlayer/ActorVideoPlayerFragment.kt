@@ -184,7 +184,7 @@ class ActorVideoPlayerFragment : Fragment() {
         popup.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.editVideo -> {
-                    val frag = VideoEditFragment(video)
+                    val frag = VideoEditFragment(pvData, video)
                     frag.show(requireActivity().supportFragmentManager, "video_edit")
                 }
             }

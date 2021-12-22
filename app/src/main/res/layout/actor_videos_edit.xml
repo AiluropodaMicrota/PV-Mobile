@@ -23,4 +23,17 @@
         app:mrb_progressTint="#FFC107"
         app:mrb_secondaryProgressTint="#FFC107" />
 
+    <TextView
+        android:id="@+id/textView7"
+        style="@style/Theme.PV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Actors"
+        android:textSize="18sp" />
+
+    <ListView
+        android:id="@+id/videoActorsSelector"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </LinearLayout>
