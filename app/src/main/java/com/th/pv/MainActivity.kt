@@ -252,7 +252,6 @@ import kotlin.math.min
             model.numActors = json.getJSONObject("data").getInt("numActors")
             model.numScenes = json.getJSONObject("data").getInt("numScenes")
 
-            model.updateServerStatus(ServerStatus.ONLINE)
             queryTopActors()
         } catch (e: Throwable) {
             Log.d("PV", "Error while parsing stats: " + e.message)
@@ -265,8 +264,10 @@ import kotlin.math.min
             topActorsQuery(this, model.numActors)
             topActorsQueryTriesLeft--
         }
-        else
+        else {
             Log.d("PV", "Top actor query: Stopped requesting, out tries")
+            onNetworkError("No more top actors query tries left")
+        }
     }
 
     fun parseTopActorsResponse(actorsResponse : String) {
@@ -296,7 +297,6 @@ import kotlin.math.min
             update()
             model.pvData.saveData()
             topActorsQueryTriesLeft = queryMaxTries
-            model.updateServerStatus(ServerStatus.ONLINE)
             queryVideos(null)
             //downloadImages()
         }
@@ -328,6 +328,7 @@ import kotlin.math.min
         }
         else {
             if (!model.startupRequestFinished) {
+                model.updateServerStatus(ServerStatus.ONLINE)
                 model.startupRequestFinished = true
                 Log.d(
                     "PV",
@@ -367,7 +368,6 @@ import kotlin.math.min
             update()
 
             model.pvData.saveData()
-            model.updateServerStatus(ServerStatus.ONLINE)
             videosQueryTriesLeft = queryMaxTries
             queryVideos(actor, page + 1)
             downloadImages()
