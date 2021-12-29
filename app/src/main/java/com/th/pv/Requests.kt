@@ -5,10 +5,7 @@ import android.util.Log
 import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Ion
 import com.th.pv.actorVideos.ActorVideosFragment
-import com.th.pv.data.Actor
-import com.th.pv.data.ActorImage
-import com.th.pv.data.ActorVideo
-import com.th.pv.data.PVData
+import com.th.pv.data.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -97,14 +94,36 @@ fun downloadImages(activity: MainActivity, downloadFinishedHandler: Handler, ima
     }
 }
 
-fun postVideoData(activity: MainActivity, video: ActorVideo, onFinish : (Boolean) -> Unit) {
-    var actorsList = ""
-    for (ac in video.actors)
-        actorsList += "\"" + ac + "\","
-    if (actorsList.length > 0)
-        actorsList = actorsList.dropLast(1)
+fun removeVideoLabel(activity: MainActivity, video: ActorVideo, label : ActorVideoLabel, onFinish : (Boolean) -> Unit) {
+    val body = "{\"operationName\":null,\"variables\":{\"item\":\"" + video.id + "\",\"label\":\"" + label.id +"\"},\"query\":\"mutation (\$item: String!, \$label: String!) {\\n  removeLabel(item: \$item, label: \$label)\\n}\\n\"}"
+    val url = ip + "/api/ql?password=" + password
+    val JSON = "application/json; charset=utf-8".toMediaType()
+    val postBody = body.toRequestBody(JSON)
 
-    val opts = "{\"rating\":" + video.rating + ", \"actors\":[" + actorsList + "]}"
+    val post = okhttp3.Request.Builder().url(url).post(postBody).build()
+    httpClient.newCall(post).enqueue(object : Callback {
+        override fun onResponse(call: Call, response: okhttp3.Response) {
+            Log.d("REMOVE_LABEL_POST", response.body!!.string())
+            if (response.isSuccessful) {
+                onFinish(true)
+            }
+            else {
+                activity.model.updateServerStatus(ServerStatus.OFFLINE)
+                onFinish(false)
+            }
+        }
+
+        override fun onFailure(call: Call, e: IOException) {
+            defaultOnFailure(activity, e)
+        }
+    })
+}
+
+fun postVideoData(activity: MainActivity, video: ActorVideo, onFinish : (Boolean) -> Unit) {
+    val actorsList = video.actors.joinToString { "\"" + it + "\"" }
+    val labelsList = video.labels.joinToString { "\"" + it + "\"" }
+
+    val opts = "{\"rating\":" + video.rating + ", \"actors\":[" + actorsList + "], \"labels\":[" + labelsList +"]}"
     val body = "{\"operationName\":null,\"variables\":{\"ids\":[\"" + video.id + "\"],\"opts\":" + opts +"},\"query\":\"mutation (\$ids: [String!]!, \$opts: SceneUpdateOpts!) {  updateScenes(ids: \$ids, opts: \$opts) {    processed    preview {      _id      meta {        dimensions {          width          height          __typename        }        __typename      }      __typename    }    ...SceneFragment    availableStreams {      label      mimeType      streamType      transcode      __typename    }    actors {      ...ActorFragment      thumbnail {        _id        color        __typename      }      __typename    }    studio {      ...StudioFragment      thumbnail {        _id        __typename      }      __typename    }    movies {      ...MovieFragment      scenes {        ...SceneFragment        __typename      }      actors {        ...ActorFragment        __typename      }      __typename    }    markers {      _id      name      time      favorite      bookmark      rating      actors {        ...ActorFragment        avatar {          _id          __typename        }        __typename      }      labels {        _id        name        color        __typename      }      thumbnail {        _id        __typename      }      __typename    }    __typename  }}fragment SceneFragment on Scene {  _id  addedOn  name  releaseDate  description  rating  favorite  bookmark  studio {    _id    name    __typename  }  labels {    _id    name    color    __typename  }  thumbnail {    _id    color    __typename  }  meta {    size    duration    fps    bitrate    dimensions {      width      height      __typename    }    __typename  }  watches  streamLinks  path  customFields  availableFields {    _id    name    type    values    unit    __typename  }  __typename}fragment ActorFragment on Actor {  _id  name  description  bornOn  age  aliases  rating  favorite  bookmark  customFields  availableFields {    _id    name    type    values    unit    __typename  }  nationality {    name    alpha2    nationality    __typename  }  __typename}fragment StudioFragment on Studio {  _id  name  description  aliases  rating  favorite  bookmark  __typename}fragment MovieFragment on Movie {  _id  name  releaseDate  description  rating  favorite  bookmark  labels {    _id    name    color    __typename  }  frontCover {    _id    color    meta {      dimensions {        width        height        __typename      }      __typename    }    __typename  }  backCover {    _id    meta {      dimensions {        width        height        __typename      }      __typename    }    __typename  }  spineCover {    _id    meta {      dimensions {        width        height        __typename      }      __typename    }    __typename  }  studio {    _id    name    __typename  }  duration  size rating __typename}\"}"
     val url = ip + "/api/ql?password=" + password
     val JSON = "application/json; charset=utf-8".toMediaType()

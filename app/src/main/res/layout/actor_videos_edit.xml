@@ -66,4 +66,46 @@
 
     </net.cachapa.expandablelayout.ExpandableLayout>
 
+    <LinearLayout
+        android:id="@+id/layoutToggleVideoLabels"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView8"
+            style="@style/Theme.PV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Labels"
+            android:textSize="18sp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iconToggleVideoLabels"
+            style="@style/Theme.PV.IconOnPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_expand" />
+    </LinearLayout>
+
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/videoLabelsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:el_duration="0"
+        app:el_expanded="false"
+        app:el_parallax="0.5">
+
+        <ListView
+            android:id="@+id/videoLabelsSelector"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
+
 </LinearLayout>
