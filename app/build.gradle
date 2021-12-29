@@ -35,7 +35,6 @@ android {
 }
 
 dependencies {
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -63,4 +62,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.32"
     implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
+    implementation 'com.github.cachapa:ExpandableLayout:2.9.2'
 }

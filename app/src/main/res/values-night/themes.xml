@@ -15,6 +15,10 @@
         <item name="colorOnBackground">@color/white</item>
     </style>
 
+    <style name="Theme.PV.IconOnPrimary">
+        <item name="tint">@color/white</item>
+    </style>
+
     <style name="ThemeOverlay.PV.FullscreenContainer" parent="">
         <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
         <item name="fullscreenTextColor">@color/light_blue_A400</item>

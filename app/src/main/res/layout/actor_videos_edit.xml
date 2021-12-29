@@ -23,17 +23,47 @@
         app:mrb_progressTint="#FFC107"
         app:mrb_secondaryProgressTint="#FFC107" />
 
-    <TextView
-        android:id="@+id/textView7"
-        style="@style/Theme.PV"
+    <LinearLayout
+        android:id="@+id/layoutToggleVideoActors"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView7"
+            style="@style/Theme.PV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Actors"
+            android:textSize="18sp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iconToggleVideoActors"
+            style="@style/Theme.PV.IconOnPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_expand" />
+
+    </LinearLayout>
+
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/videoActorsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Actors"
-        android:textSize="18sp" />
+        app:el_duration="0"
+        app:el_expanded="false"
+        app:el_parallax="0.5">
 
-    <ListView
-        android:id="@+id/videoActorsSelector"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        <ListView
+            android:id="@+id/videoActorsSelector"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
 
 </LinearLayout>

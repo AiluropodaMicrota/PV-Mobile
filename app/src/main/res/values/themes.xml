@@ -15,6 +15,10 @@
         <item name="colorOnBackground">@color/black</item>
     </style>
 
+    <style name = "Theme.PV.IconOnPrimary">
+        <item name="tint">@color/black</item>
+    </style>
+
     <style name = "RatingBar" parent="Theme.AppCompat">
         <item name = "colorControlNormal">#FFD700</item>
         <item name= "colorControlActivated">#FFD700</item>
