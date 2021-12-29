@@ -17,4 +17,9 @@
         android:orderInCategory="100"
         android:title="Edit"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_video_inc_view_count"
+        android:orderInCategory="100"
+        android:title="Increase view count"
+        app:showAsAction="never"/>
 </menu>

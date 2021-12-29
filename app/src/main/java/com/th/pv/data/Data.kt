@@ -194,6 +194,7 @@ data class PVData(
 
         //Add markers to video
         val markersJson = vid.getJSONArray("markers")
+        videos[id]!!.markers.clear()
         for (j in 0 until markersJson.length()) {
             val m = markersJson.getJSONObject(j)
             val mid = m.getString("_id")
@@ -215,6 +216,7 @@ data class PVData(
 
         //Add labels to video
         val labelsJson = vid.getJSONArray("labels")
+        videos[id]!!.labels.clear()
         for (j in 0 until labelsJson.length()) {
             val l = labelsJson.getJSONObject(j)
             val lid = l.getString("_id")

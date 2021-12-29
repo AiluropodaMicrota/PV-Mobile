@@ -85,7 +85,6 @@ class ActorVideosFragment : Fragment() {
                         progressDialog.hide()
                     }
                     )
-
                 return true
             }
             R.id.action_video_info -> {
@@ -94,13 +93,15 @@ class ActorVideosFragment : Fragment() {
                     .setMessage(vid.toString() )
                     .setPositiveButton("OK") {dialog, which ->  dialog.cancel()}
                     .show()
-
                 return true
             }
             R.id.action_video_edit -> {
                 val frag = VideoEditFragment(pvData, vid)
                 frag.show(requireActivity().supportFragmentManager, "video_edit")
-
+                return true
+            }
+            R.id.action_video_inc_view_count -> {
+                watchVideo(activity as MainActivity, vid) {}
                 return true
             }
             else -> return super.onContextItemSelected(item)
